@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <!-- Dumbbell left weight -->
+  <rect x="10" y="35" width="10" height="30" rx="5" fill="#00BFD8"/>
+  <rect x="25" y="40" width="5" height="20" rx="2" fill="#00BFD8"/>
+  
+  <!-- Dumbbell bar -->
+  <line x1="30" y1="50" x2="60" y2="50" stroke="#00BFD8" stroke-width="4"/>
+  
+  <!-- Heartbeat line -->
+  <path d="M60 50 L70 50 L75 30 L85 70 L95 40 L105 60 L115 30 L125 50 L140 50" stroke="#00BFD8" stroke-width="4" fill="none"/>
+  
+  <!-- Dumbbell right weight -->
+  <rect x="140" y="40" width="5" height="20" rx="2" fill="#00BFD8"/>
+  <rect x="150" y="35" width="10" height="30" rx="5" fill="#00BFD8"/>
+</svg>
