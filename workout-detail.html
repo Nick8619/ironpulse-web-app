@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronPulse Fitness - Workout Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <button class="back-btn" id="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">Workout Details</h1>
+            <div class="header-actions">
+                <button class="btn-icon" id="edit-workout-btn" aria-label="Workout bearbeiten">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon" id="share-workout-btn" aria-label="Workout teilen">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
+        </header>
+        
+        <main class="container">
+            <section class="workout-header-section">
+                <div class="workout-header-content">
+                    <h2 id="workout-name" class="workout-title">Workout Name</h2>
+                    <div class="workout-meta">
+                        <div class="workout-type-badge" id="workout-type-badge">
+                            <i class="fas fa-dumbbell"></i>
+                            <span id="workout-type">Workout Type</span>
+                        </div>
+                        <div class="workout-date" id="workout-date">
+                            <i class="far fa-calendar"></i>
+                            <span id="workout-date-text">Date</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="workout-actions">
+                    <button class="btn-primary" id="repeat-workout-btn">
+                        <i class="fas fa-redo"></i>
+                        Workout wiederholen
+                    </button>
+                </div>
+            </section>
+            
+            <section class="workout-summary-section">
+                <div class="summary-card">
+                    <div class="summary-item">
+                        <span class="summary-label">Übungen</span>
+                        <span class="summary-value" id="exercise-count">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Sets</span>
+                        <span class="summary-value" id="set-count">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Fortschritt</span>
+                        <div class="progress-indicator" id="progress-indicator">
+                            <i class="fas fa-arrow-up"></i>
+                            <span id="progress-value">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="exercises-section">
+                <h3 class="section-title">Übungen</h3>
+                <div id="exercises-list" class="exercises-list">
+                    <!-- Exercises will be dynamically inserted here -->
+                </div>
+            </section>
+            
+            <section class="notes-section">
+                <h3 class="section-title">Notizen</h3>
+                <div class="notes-content" id="workout-notes">
+                    <p class="empty-notes">Keine Notizen für dieses Workout.</p>
+                </div>
+                <button class="btn-tertiary" id="add-notes-btn">
+                    <i class="fas fa-plus"></i>
+                    Notiz hinzufügen
+                </button>
+            </section>
+        </main>
+        
+        <!-- Modals -->
+        <div id="edit-exercise-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Übung bearbeiten</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit-exercise-name" class="input-label">Übungsname</label>
+                        <input type="text" id="edit-exercise-name" class="input-field" placeholder="z.B. Bankdrücken, Kniebeugen...">
+                    </div>
+                    
+                    <div id="edit-sets-container" class="sets-container">
+                        <!-- Sets will be dynamically inserted here -->
+                    </div>
+                    
+                    <button id="add-set-to-exercise-btn" class="btn-secondary">
+                        <i class="fas fa-plus"></i>
+                        Set hinzufügen
+                    </button>
+                    
+                    <div class="modal-actions">
+                        <button id="delete-exercise-btn" class="btn-tertiary text-danger">
+                            <i class="fas fa-trash"></i>
+                            Übung löschen
+                        </button>
+                        <button id="save-exercise-changes-btn" class="btn-primary">Änderungen speichern</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="add-notes-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Notizen hinzufügen</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="workout-notes-input" class="input-label">Notizen</label>
+                        <textarea id="workout-notes-input" class="input-field" rows="4" placeholder="Notiere deine Gedanken zu diesem Workout..."></textarea>
+                    </div>
+                    
+                    <button id="save-notes-btn" class="btn-primary">Notizen speichern</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="repeat-workout-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Workout wiederholen</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Möchtest du dieses Workout mit den gleichen Übungen wiederholen?</p>
+                    <p>Du kannst die Gewichte und Wiederholungen während des Trainings anpassen.</p>
+                    
+                    <div class="modal-actions">
+                        <button id="cancel-repeat-btn" class="btn-tertiary">Abbrechen</button>
+                        <button id="confirm-repeat-btn" class="btn-primary">Workout starten</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="share-workout-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Workout teilen</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="share-options">
+                        <button class="share-option" data-option="group">
+                            <i class="fas fa-users"></i>
+                            <span>Mit Gruppe teilen</span>
+                        </button>
+                        <button class="share-option" data-option="link">
+                            <i class="fas fa-link"></i>
+                            <span>Link kopieren</span>
+                        </button>
+                        <button class="share-option" data-option="export">
+                            <i class="fas fa-file-export"></i>
+                            <span>Als PDF exportieren</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast for notifications -->
+        <div id="toast" class="toast" style="display: none;"></div>
+        
+        <!-- Loading indicator -->
+        <div id="loader" class="loader" style="display: none;"></div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const backBtn = document.getElementById('back-btn');
+            const editWorkoutBtn = document.getElementById('edit-workout-btn');
+            const shareWorkoutBtn = document.getElementById('share-workout-btn');
+            const repeatWorkoutBtn = document.getElementById('repeat-workout-btn');
+            const addNotesBtn = document.getElementById('add-notes-btn');
+            const workoutNameEl = document.getElementById('workout-name');
+            const workoutTypeEl = document.getElementById('workout-type');
+            const workoutDateEl = document.getElementById('workout-date-text');
+            const exerciseCountEl = document.getElementById('exercise-count');
+            const setCountEl = document.getElementById('set-count');
+            const progressValueEl = document.getElementById('progress-value');
+            const exercisesList = document.getElementById('exercises-list');
+            const workoutNotes = document.getElementById('workout-notes');
+            
+            // Modals
+            const editExerciseModal = document.getElementById('edit-exercise-modal');
+            const addNotesModal = document.getElementById('add-notes-modal');
+            const repeatWorkoutModal = document.getElementById('repeat-workout-modal');
+            const shareWorkoutModal = document.getElementById('share-workout-modal');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            
+            // Modal action buttons
+            const addSetToExerciseBtn = document.getElementById('add-set-to-exercise-btn');
+            const saveExerciseChangesBtn = document.getElementById('save-exercise-changes-btn');
+            const deleteExerciseBtn = document.getElementById('delete-exercise-btn');
+            const saveNotesBtn = document.getElementById('save-notes-btn');
+            const cancelRepeatBtn = document.getElementById('cancel-repeat-btn');
+            const confirmRepeatBtn = document.getElementById('confirm-repeat-btn');
+            const shareOptions = document.querySelectorAll('.share-option');
+            
+            // Form inputs
+            const editExerciseNameInput = document.getElementById('edit-exercise-name');
+            const editSetsContainer = document.getElementById('edit-sets-container');
+            const workoutNotesInput = document.getElementById('workout-notes-input');
+            
+            // Get workout ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const workoutId = urlParams.get('id');
+            
+            // Current workout data
+            let currentWorkout = null;
+            let currentExerciseId = null;
+            
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('ironpulse_current_user') || '{}');
+            if (!currentUser.id) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load workout data
+            loadWorkout();
+            
+            // Event Listeners
+            backBtn.addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            
+            editWorkoutBtn.addEventListener('click', function() {
+                // Redirect to edit workout page
+                window.location.href = `edit-workout.html?id=${workoutId}`;
+            });
+            
+            shareWorkoutBtn.addEventListener('click', function() {
+                openModal(shareWorkoutModal);
+            });
+            
+            repeatWorkoutBtn.addEventListener('click', function() {
+                openModal(repeatWorkoutModal);
+            });
+            
+            addNotesBtn.addEventListener('click', function() {
+                workoutNotesInput.value = currentWorkout.notes || '';
+                openModal(addNotesModal);
+            });
+            
+            // Close modals
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    closeAllModals();
+                });
+            });
+            
+            // Modal backdrop click to close
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    closeAllModals();
+                }
+            });
+            
+            // Edit exercise
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('edit-exercise-btn') || e.target.closest('.edit-exercise-btn')) {
+                    const exerciseItem = e.target.closest('.exercise-item');
+                    if (exerciseItem) {
+                        const exerciseId = parseInt(exerciseItem.dataset.id);
+                        openEditExerciseModal(exerciseId);
+                    }
+                }
+            });
+            
+            // Add set to exercise
+            addSetToExerciseBtn.addEventListener('click', function() {
+                addSetToEditForm();
+            });
+            
+            // Save exercise changes
+            saveExerciseChangesBtn.addEventListener('click', function() {
+                saveExerciseChanges();
+            });
+            
+            // Delete exercise
+            deleteExerciseBtn.addEventListener('click', function() {
+                deleteExercise();
+            });
+            
+            // Save notes
+            saveNotesBtn.addEventListener('click', function() {
+                saveWorkoutNotes();
+            });
+            
+            // Cancel repeat workout
+            cancelRepeatBtn.addEventListener('click', function() {
+                closeAllModals();
+            });
+            
+            // Confirm repeat workout
+            confirmRepeatBtn.addEventListener('click', function() {
+                repeatWorkout();
+            });
+            
+            // Share options
+            shareOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const shareType = this.dataset.option;
+                    handleShareOption(shareType);
+                });
+            });
+            
+            // Functions
+            function loadWorkout() {
+                showLoader();
+                
+                // Simulate API delay
+                setTimeout(() => {
+                    // Get users from localStorage
+                    const users = JSON.parse(localStorage.getItem('ironpulse_users') || '[]');
+                    const user = users.find(u => u.id === currentUser.id);
+                    
+                    if (!user) {
+                        hideLoader();
+                        showToast('Benutzer nicht gefunden', 'error');
+                        return;
+                    }
+                    
+                    // Find workout
+                    const workout = user.workouts.find(w => w.id === parseInt(workoutId));
+                    
+                    if (!workout) {
+                        hideLoader();
+                        showToast('Workout nicht gefunden', 'error');
+                        return;
+                    }
+                    
+                    currentWorkout = workout;
+                    renderWorkoutDetails();
+                    hideLoader();
+                }, 800);
+            }
+            
+            function renderWorkoutDetails() {
+                // Set workout details
+                workoutNameEl.textContent = currentWorkout.name || currentWorkout.type;
+                workoutTypeEl.textContent = currentWorkout.type;
+                
+                // Format date
+                const workoutDate = new Date(currentWorkout.date);
+                const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+                workoutDateEl.textContent = workoutDate.toLocaleDateString('de-DE', options);
+                
+                // Set counts
+                const exerciseCount = currentWorkout.exercises.length;
+                exerciseCountEl.textContent = exerciseCount;
+                
+                let setCount = 0;
+                currentWorkout.exercises.forEach(exercise => {
+                    setCount += exercise.sets.length;
+                });
+                setCountEl.textContent = setCount;
+                
+                // Set progress
+                const progressPercentage = currentWorkout.progress || 0;
+                progressValueEl.textContent = `${progressPercentage}%`;
+                
+                // Progress indicator color
+                const progressIndicator = document.getElementById('progress-indicator');
+                if (progressPercentage > 0) {
+                    progressIndicator.classList.add('positive');
+                } else if (progressPercentage < 0) {
+                    progressIndicator.classList.add('negative');
+                }
+                
+                // Render exercises
+                renderExercises();
+                
+                // Render notes
+                if (currentWorkout.notes) {
+                    workoutNotes.innerHTML = `<p>${currentWorkout.notes}</p>`;
+                }
+            }
+            
+            function renderExercises() {
+                exercisesList.innerHTML = '';
+                
+                currentWorkout.exercises.forEach(exercise => {
+                    const exerciseItem = document.createElement('div');
+                    exerciseItem.className = 'exercise-item';
+                    exerciseItem.dataset.id = exercise.id;
+                    
+                    const exerciseHeader = document.createElement('div');
+                    exerciseHeader.className = 'exercise-header';
+                    
+                    const exerciseName = document.createElement('h4');
+                    exerciseName.className = 'exercise-name';
+                    exerciseName.textContent = exercise.name;
+                    
+                    const exerciseActions = document.createElement('div');
+                    exerciseActions.className = 'exercise-actions';
+                    
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn-icon edit-exercise-btn';
+                    editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                    editBtn.setAttribute('aria-label', 'Übung bearbeiten');
+                    
+                    exerciseActions.appendChild(editBtn);
+                    exerciseHeader.appendChild(exerciseName);
+                    exerciseHeader.appendChild(exerciseActions);
+                    
+                    const setsList = document.createElement('div');
+                    setsList.className = 'sets-list';
+                    
+                    // Table header
+                    const tableHeader = document.createElement('div');
+                    tableHeader.className = 'set-row header';
+                    tableHeader.innerHTML = `
+                        <div class="set-cell">Set</div>
+                        <div class="set-cell">Gewicht (kg)</div>
+                        <div class="set-cell">Wiederholungen</div>
+                    `;
+                    setsList.appendChild(tableHeader);
+                    
+                    // Sets
+                    exercise.sets.forEach((set, index) => {
+                        const setRow = document.createElement('div');
+                        setRow.className = 'set-row';
+                        
+                        const setNumber = document.createElement('div');
+                        setNumber.className = 'set-cell';
+                        setNumber.textContent = index + 1;
+                        
+                        const setWeight = document.createElement('div');
+                        setWeight.className = 'set-cell';
+                        setWeight.textContent = set.weight;
+                        
+                        const setReps = document.createElement('div');
+                        setReps.className = 'set-cell';
+                        setReps.textContent = set.reps;
+                        
+                        setRow.appendChild(setNumber);
+                        setRow.appendChild(setWeight);
+                        setRow.appendChild(setReps);
+                        
+                        setsList.appendChild(setRow);
+                    });
+                    
+                    exerciseItem.appendChild(exerciseHeader);
+                    exerciseItem.appendChild(setsList);
+                    
+                    exercisesList.appendChild(exerciseItem);
+                });
+            }
+            
+            function openEditExerciseModal(exerciseId) {
+                const exercise = currentWorkout.exercises.find(e => e.id === exerciseId);
+                if (!exercise) return;
+                
+                currentExerciseId = exerciseId;
+                editExerciseNameInput.value = exercise.name;
+                
+                // Clear sets container
+                editSetsContainer.innerHTML = '';
+                
+                // Add sets
+                exercise.sets.forEach((set, index) => {
+                    addSetToEditForm(set.weight, set.reps);
+                });
+                
+                openModal(editExerciseModal);
+            }
+            
+            function addSetToEditForm(weight = '', reps = '') {
+                const setIndex = editSetsContainer.children.length;
+                
+                const setRow = document.createElement('div');
+                setRow.className = 'set-edit-row';
+                
+                setRow.innerHTML = `
+                    <div class="set-number">${setIndex + 1}</div>
+                    <div class="set-inputs">
+                        <div class="form-group">
+                            <input type="number" class="input-field set-weight" placeholder="Gewicht" value="${weight}" min="0" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" class="input-field set-reps" placeholder="Wdh." value="${reps}" min="0">
+                        </div>
+                    </div>
+                    <button type="button" class="btn-icon remove-set-btn" aria-label="Set entfernen">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                // Add event listener to remove button
+                const removeBtn = setRow.querySelector('.remove-set-btn');
+                removeBtn.addEventListener('click', function() {
+                    setRow.remove();
+                    // Update set numbers
+                    updateSetNumbers();
+                });
+                
+                editSetsContainer.appendChild(setRow);
+            }
+            
+            function updateSetNumbers() {
+                const setRows = editSetsContainer.querySelectorAll('.set-edit-row');
+                setRows.forEach((row, index) => {
+                    row.querySelector('.set-number').textContent = index + 1;
+                });
+            }
+            
+            function saveExerciseChanges() {
+                const exerciseName = editExerciseNameInput.value.trim();
+                if (!exerciseName) {
+                    showToast('Bitte gib einen Übungsnamen ein', 'error');
+                    return;
+                }
+                
+                const setRows = editSetsContainer.querySelectorAll('.set-edit-row');
+                if (setRows.length === 0) {
+                    showToast('Bitte füge mindestens ein Set hinzu', 'error');
+                    return;
+                }
+                
+                const sets = [];
+                let isValid = true;
+                
+                setRows.forEach(row => {
+                    const weightInput = row.querySelector('.set-weight');
+                    const repsInput = row.querySelector('.set-reps');
+                    
+                    const weight = parseFloat(weightInput.value);
+                    const reps = parseInt(repsInput.value);
+                    
+                    if (isNaN(weight) || isNaN(reps) || weight < 0 || reps < 0) {
+                        isValid = false;
+                        return;
+                    }
+                    
+                    sets.push({
+                        weight: weight,
+                        reps: reps
+                    });
+                });
+                
+                if (!isValid) {
+                    showToast('Bitte gib gültige Werte für Gewicht und Wiederholungen ein', 'error');
+                    return;
+                }
+                
+                // Update exercise
+                const exerciseIndex = currentWorkout.exercises.findIndex(e => e.id === currentExerciseId);
+                if (exerciseIndex === -1) return;
+                
+                currentWorkout.exercises[exerciseIndex].name = exerciseName;
+                currentWorkout.exercises[exerciseIndex].sets = sets;
+                
+                // Save to localStorage
+                saveWorkout();
+                
+                // Close modal and refresh
+                closeAllModals();
+                renderExercises();
+                
+                // Update counts
+                let setCount = 0;
+                currentWorkout.exercises.forEach(exercise => {
+                    setCount += exercise.sets.length;
+                });
+                setCountEl.textContent = setCount;
+                
+                showToast('Übung erfolgreich aktualisiert', 'success');
+            }
+            
+            function deleteExercise() {
+                if (!confirm('Möchtest du diese Übung wirklich löschen?')) return;
+                
+                // Remove exercise
+                const exerciseIndex = currentWorkout.exercises.findIndex(e => e.id === currentExerciseId);
+                if (exerciseIndex === -1) return;
+                
+                currentWorkout.exercises.splice(exerciseIndex, 1);
+                
+                // Save to localStorage
+                saveWorkout();
+                
+                // Close modal and refresh
+                closeAllModals();
+                renderWorkoutDetails();
+                
+                showToast('Übung erfolgreich gelöscht', 'success');
+            }
+            
+            function saveWorkoutNotes() {
+                const notes = workoutNotesInput.value.trim();
+                currentWorkout.notes = notes;
+                
+                // Save to localStorage
+                saveWorkout();
+                
+                // Update notes display
+                if (notes) {
+                    workoutNotes.innerHTML = `<p>${notes}</p>`;
+                } else {
+                    workoutNotes.innerHTML = `<p class="empty-notes">Keine Notizen für dieses Workout.</p>`;
+                }
+                
+                closeAllModals();
+                showToast('Notizen erfolgreich gespeichert', 'success');
+            }
+            
+            function repeatWorkout() {
+                // Create a new workout based on the current one
+                const newWorkout = {
+                    id: Date.now(),
+                    name: currentWorkout.name,
+                    type: currentWorkout.type,
+                    date: new Date().toISOString(),
+                    exercises: currentWorkout.exercises.map(exercise => ({
+                        id: Date.now() + Math.floor(Math.random() * 1000),
+                        name: exercise.name,
+                        sets: exercise.sets.map(set => ({
+                            weight: set.weight,
+                            reps: set.reps
+                        }))
+                    })),
+                    progress: 0
+                };
+                
+                // Get users from localStorage
+                const users = JSON.parse(localStorage.getItem('ironpulse_users') || '[]');
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                
+                if (userIndex === -1) {
+                    showToast('Benutzer nicht gefunden', 'error');
+                    return;
+                }
+                
+                // Add new workout
+                users[userIndex].workouts.unshift(newWorkout);
+                
+                // Save to localStorage
+                localStorage.setItem('ironpulse_users', JSON.stringify(users));
+                
+                // Redirect to new workout
+                showToast('Workout erfolgreich wiederholt', 'success');
+                setTimeout(() => {
+                    window.location.href = `workout-detail.html?id=${newWorkout.id}`;
+                }, 1500);
+            }
+            
+            function handleShareOption(option) {
+                switch (option) {
+                    case 'group':
+                        showToast('Teilen mit Gruppe wird vorbereitet...', 'info');
+                        // Implement group sharing
+                        break;
+                    case 'link':
+                        // Copy link to clipboard
+                        const link = window.location.href;
+                        navigator.clipboard.writeText(link).then(() => {
+                            showToast('Link in die Zwischenablage kopiert', 'success');
+                        }).catch(err => {
+                            showToast('Fehler beim Kopieren des Links', 'error');
+                        });
+                        break;
+                    case 'export':
+                        showToast('Export als PDF wird vorbereitet...', 'info');
+                        // Implement PDF export
+                        break;
+                }
+                
+                closeAllModals();
+            }
+            
+            function saveWorkout() {
+                // Get users from localStorage
+                const users = JSON.parse(localStorage.getItem('ironpulse_users') || '[]');
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                
+                if (userIndex === -1) return;
+                
+                // Find workout
+                const workoutIndex = users[userIndex].workouts.findIndex(w => w.id === parseInt(workoutId));
+                
+                if (workoutIndex === -1) return;
+                
+                // Update workout
+                users[userIndex].workouts[workoutIndex] = currentWorkout;
+                
+                // Save to localStorage
+                localStorage.setItem('ironpulse_users', JSON.stringify(users));
+            }
+            
+            function openModal(modal) {
+                closeAllModals();
+                modal.style.display = 'flex';
+                document.body.classList.add('modal-open');
+            }
+            
+            function closeAllModals() {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                document.body.classList.remove('modal-open');
+            }
+            
+            function showToast(message, type = 'info') {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast toast-${type}`;
+                toast.style.display = 'block';
+                
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+            
+            function showLoader() {
+                document.getElementById('loader').style.display = 'flex';
+            }
+            
+            function hideLoader() {
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

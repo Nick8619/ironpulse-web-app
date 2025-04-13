@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronPulse Fitness - Statistiken</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="transitions.css">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header class="app-header">
+            <button class="back-btn" id="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="page-title">Statistiken</h1>
+            <div class="header-actions">
+                <button class="btn-icon" id="filter-stats-btn" aria-label="Statistiken filtern">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <button class="btn-icon" id="share-stats-btn" aria-label="Statistiken teilen">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
+        </header>
+        
+        <main class="container">
+            <section class="stats-overview-section">
+                <div class="stats-tabs">
+                    <button class="stats-tab active" data-period="week">Woche</button>
+                    <button class="stats-tab" data-period="month">Monat</button>
+                    <button class="stats-tab" data-period="year">Jahr</button>
+                    <button class="stats-tab" data-period="all">Gesamt</button>
+                </div>
+                
+                <div class="stats-summary-card">
+                    <div class="summary-item">
+                        <span class="summary-label">Workouts</span>
+                        <span class="summary-value" id="workout-count">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Übungen</span>
+                        <span class="summary-value" id="exercise-count">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Fortschritt</span>
+                        <div class="progress-indicator" id="progress-indicator">
+                            <i class="fas fa-arrow-up"></i>
+                            <span id="progress-value">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="stats-chart-section">
+                <h3 class="section-title">Workout Aktivität</h3>
+                <div class="chart-container">
+                    <canvas id="activity-chart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: var(--color-primary);"></div>
+                        <span>Workouts</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: var(--color-success);"></div>
+                        <span>Fortschritt</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="stats-chart-section">
+                <h3 class="section-title">Fortschritt nach Workout-Typ</h3>
+                <div class="chart-container">
+                    <canvas id="workout-type-chart"></canvas>
+                </div>
+            </section>
+            
+            <section class="stats-chart-section">
+                <h3 class="section-title">Top Übungen</h3>
+                <div class="chart-container">
+                    <canvas id="top-exercises-chart"></canvas>
+                </div>
+            </section>
+            
+            <section class="stats-detail-section">
+                <h3 class="section-title">Detaillierte Statistiken</h3>
+                
+                <div class="stats-table-container">
+                    <div class="stats-table-header">
+                        <div class="stats-table-cell">Übung</div>
+                        <div class="stats-table-cell">Max. Gewicht</div>
+                        <div class="stats-table-cell">Fortschritt</div>
+                    </div>
+                    
+                    <div id="stats-table-body" class="stats-table-body">
+                        <!-- Statistiken werden hier dynamisch eingefügt -->
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Modals -->
+        <div id="filter-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Statistiken filtern</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="filter-workout-type" class="input-label">Workout-Typ</label>
+                        <select id="filter-workout-type" class="select-field">
+                            <option value="all">Alle Typen</option>
+                            <option value="Pushday">Pushday</option>
+                            <option value="Pullday">Pullday</option>
+                            <option value="Legday">Legday</option>
+                            <option value="Full Body">Full Body</option>
+                            <option value="Upper Body">Upper Body</option>
+                            <option value="Lower Body">Lower Body</option>
+                            <option value="Cardio">Cardio</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filter-date-range" class="input-label">Zeitraum</label>
+                        <select id="filter-date-range" class="select-field">
+                            <option value="week">Letzte Woche</option>
+                            <option value="month">Letzter Monat</option>
+                            <option value="3months">Letzte 3 Monate</option>
+                            <option value="6months">Letzte 6 Monate</option>
+                            <option value="year">Letztes Jahr</option>
+                            <option value="all">Gesamter Zeitraum</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="input-label">Anzeigen</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="show-workouts" checked>
+                                <span class="checkbox-text">Workouts</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="show-progress" checked>
+                                <span class="checkbox-text">Fortschritt</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="show-weight" checked>
+                                <span class="checkbox-text">Gewicht</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button id="apply-filters-btn" class="btn-primary btn-block">Filter anwenden</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="share-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Statistiken teilen</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="share-options">
+                        <button class="share-option" data-option="group">
+                            <i class="fas fa-users"></i>
+                            <span>Mit Gruppe teilen</span>
+                        </button>
+                        <button class="share-option" data-option="export">
+                            <i class="fas fa-file-export"></i>
+                            <span>Als PDF exportieren</span>
+                        </button>
+                        <button class="share-option" data-option="image">
+                            <i class="fas fa-image"></i>
+                            <span>Als Bild speichern</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast for notifications -->
+        <div id="toast" class="toast" style="display: none;"></div>
+        
+        <!-- Loading indicator -->
+        <div id="loader" class="loader" style="display: none;"></div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const backBtn = document.getElementById('back-btn');
+            const filterStatsBtn = document.getElementById('filter-stats-btn');
+            const shareStatsBtn = document.getElementById('share-stats-btn');
+            const statsTabs = document.querySelectorAll('.stats-tab');
+            const workoutCountEl = document.getElementById('workout-count');
+            const exerciseCountEl = document.getElementById('exercise-count');
+            const progressValueEl = document.getElementById('progress-value');
+            const progressIndicator = document.getElementById('progress-indicator');
+            const statsTableBody = document.getElementById('stats-table-body');
+            
+            // Modals
+            const filterModal = document.getElementById('filter-modal');
+            const shareModal = document.getElementById('share-modal');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            
+            // Modal action buttons
+            const applyFiltersBtn = document.getElementById('apply-filters-btn');
+            const shareOptions = document.querySelectorAll('.share-option');
+            
+            // Filter inputs
+            const filterWorkoutType = document.getElementById('filter-workout-type');
+            const filterDateRange = document.getElementById('filter-date-range');
+            const showWorkouts = document.getElementById('show-workouts');
+            const showProgress = document.getElementById('show-progress');
+            const showWeight = document.getElementById('show-weight');
+            
+            // Charts
+            let activityChart;
+            let workoutTypeChart;
+            let topExercisesChart;
+            
+            // Current filter state
+            let currentPeriod = 'week';
+            let currentWorkoutType = 'all';
+            let currentDateRange = 'week';
+            let showWorkoutsData = true;
+            let showProgressData = true;
+            let showWeightData = true;
+            
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('ironpulse_current_user') || '{}');
+            if (!currentUser.id) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Event Listeners
+            backBtn.addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            
+            filterStatsBtn.addEventListener('click', function() {
+                openModal(filterModal);
+            });
+            
+            shareStatsBtn.addEventListener('click', function() {
+                openModal(shareModal);
+            });
+            
+            // Stats period tabs
+            statsTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const period = this.dataset.period;
+                    
+                    // Update active tab
+                    statsTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update current period and reload data
+                    currentPeriod = period;
+                    loadStatsData();
+                });
+            });
+            
+            // Close modals
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    closeAllModals();
+                });
+            });
+            
+            // Modal backdrop click to close
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    closeAllModals();
+                }
+            });
+            
+            // Apply filters
+            applyFiltersBtn.addEventListener('click', function() {
+                currentWorkoutType = filterWorkoutType.value;
+                currentDateRange = filterDateRange.value;
+                showWorkoutsData = showWorkouts.checked;
+                showProgressData = showProgress.checked;
+                showWeightData = showWeight.checked;
+                
+                loadStatsData();
+                closeAllModals();
+            });
+            
+            // Share options
+            shareOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const shareType = this.dataset.option;
+                    handleShareOption(shareType);
+                });
+            });
+            
+            // Load initial data
+            loadStatsData();
+            
+            // Functions
+            function loadStatsData() {
+                showLoader();
+                
+                // Simulate API delay
+                setTimeout(() => {
+                    // Get users from localStorage
+                    const users = JSON.parse(localStorage.getItem('ironpulse_users') || '[]');
+                    const user = users.find(u => u.id === currentUser.id);
+                    
+                    if (!user) {
+                        hideLoader();
+                        showToast('Benutzer nicht gefunden', 'error');
+                        return;
+                    }
+                    
+                    // Filter workouts based on current filters
+                    let workouts = user.workouts || [];
+                    
+                    // Apply date range filter
+                    workouts = filterWorkoutsByDate(workouts, currentPeriod);
+                    
+                    // Apply workout type filter if not 'all'
+                    if (currentWorkoutType !== 'all') {
+                        workouts = workouts.filter(w => w.type === currentWorkoutType);
+                    }
+                    
+                    // Calculate stats
+                    const stats = calculateStats(workouts);
+                    
+                    // Update UI
+                    updateStatsUI(stats);
+                    
+                    // Render charts
+                    renderCharts(workouts, stats);
+                    
+                    hideLoader();
+                }, 800);
+            }
+            
+            function filterWorkoutsByDate(workouts, period) {
+                const now = new Date();
+                let startDate;
+                
+                switch (period) {
+                    case 'week':
+                        startDate = new Date(now);
+                        startDate.setDate(now.getDate() - 7);
+                        break;
+                    case 'month':
+                        startDate = new Date(now);
+                        startDate.setMonth(now.getMonth() - 1);
+                        break;
+                    case 'year':
+                        startDate = new Date(now);
+                        startDate.setFullYear(now.getFullYear() - 1);
+                        break;
+                    case 'all':
+                        return workouts;
+                    default:
+                        startDate = new Date(now);
+                        startDate.setDate(now.getDate() - 7);
+                }
+                
+                return workouts.filter(workout => {
+                    const workoutDate = new Date(workout.date);
+                    return workoutDate >= startDate && workoutDate <= now;
+                });
+            }
+            
+            function calculateStats(workouts) {
+                // Basic counts
+                const workoutCount = workouts.length;
+                
+                let exerciseCount = 0;
+                let totalSets = 0;
+                let totalProgress = 0;
+                let exerciseStats = {};
+                let workoutTypeStats = {};
+                
+                // Process each workout
+                workouts.forEach(workout => {
+                    // Count exercises
+                    exerciseCount += workout.exercises.length;
+                    
+                    // Count sets and track exercise stats
+                    workout.exercises.forEach(exercise => {
+                        totalSets += exercise.sets.length;
+                        
+                        // Track max weight for each exercise
+                        if (!exerciseStats[exercise.name]) {
+                            exerciseStats[exercise.name] = {
+                                maxWeight: 0,
+                                totalWeight: 0,
+                                totalReps: 0,
+                                setCount: 0,
+                                progress: 0,
+                                occurrences: 0
+                            };
+                        }
+                        
+                        exerciseStats[exercise.name].occurrences++;
+                        
+                        // Find max weight
+                        const maxWeight = Math.max(...exercise.sets.map(set => set.weight));
+                        if (maxWeight > exerciseStats[exercise.name].maxWeight) {
+                            exerciseStats[exercise.name].maxWeight = maxWeight;
+                        }
+                        
+                        // Track total weight and reps for average calculation
+                        exercise.sets.forEach(set => {
+                            exerciseStats[exercise.name].totalWeight += set.weight;
+                            exerciseStats[exercise.name].totalReps += set.reps;
+                            exerciseStats[exercise.name].setCount++;
+                        });
+                    });
+                    
+                    // Track progress by workout type
+                    if (!workoutTypeStats[workout.type]) {
+                        workoutTypeStats[workout.type] = {
+                            count: 0,
+                            totalProgress: 0
+                        };
+                    }
+                    
+                    workoutTypeStats[workout.type].count++;
+                    workoutTypeStats[workout.type].totalProgress += workout.progress || 0;
+                    
+                    // Sum up total progress
+                    totalProgress += workout.progress || 0;
+                });
+                
+                // Calculate average progress
+                const avgProgress = workoutCount > 0 ? Math.round(totalProgress / workoutCount) : 0;
+                
+                // Calculate average progress by workout type
+                Object.keys(workoutTypeStats).forEach(type => {
+                    const typeStats = workoutTypeStats[type];
+                    typeStats.avgProgress = typeStats.count > 0 ? Math.round(typeStats.totalProgress / typeStats.count) : 0;
+                });
+                
+                // Calculate progress for each exercise
+                Object.keys(exerciseStats).forEach(exercise => {
+                    const stats = exerciseStats[exercise];
+                    stats.avgWeight = stats.setCount > 0 ? Math.round((stats.totalWeight / stats.setCount) * 10) / 10 : 0;
+                    stats.avgReps = stats.setCount > 0 ? Math.round(stats.totalReps / stats.setCount) : 0;
+                    
+                    // Simulate progress calculation (in a real app, this would compare with previous periods)
+                    stats.progress = Math.round((Math.random() * 20) - 5); // Random progress between -5% and +15%
+                });
+                
+                return {
+                    workoutCount,
+                    exerciseCount,
+                    totalSets,
+                    avgProgress,
+                    exerciseStats,
+                    workoutTypeStats
+                };
+            }
+            
+            function updateStatsUI(stats) {
+                // Update summary numbers
+                workoutCountEl.textContent = stats.workoutCount;
+                exerciseCountEl.textContent = stats.exerciseCount;
+                progressValueEl.textContent = `${stats.avgProgress}%`;
+                
+                // Update progress indicator color
+                progressIndicator.className = 'progress-indicator';
+                if (stats.avgProgress > 0) {
+                    progressIndicator.classList.add('positive');
+                } else if (stats.avgProgress < 0) {
+                    progressIndicator.classList.add('negative');
+                }
+                
+                // Update detailed stats table
+                statsTableBody.innerHTML = '';
+                
+                // Sort exercises by max weight (descending)
+                const sortedExercises = Object.entries(stats.exerciseStats)
+                    .sort((a, b) => b[1].maxWeight - a[1].maxWeight);
+                
+                sortedExercises.forEach(([exercise, stats]) => {
+                    const row = document.createElement('div');
+                    row.className = 'stats-table-row';
+                    
+                    row.innerHTML = `
+                        <div class="stats-table-cell">${exercise}</div>
+                        <div class="stats-table-cell">${stats.maxWeight} kg</div>
+                        <div class="stats-table-cell">
+                            <div class="progress-indicator ${stats.progress > 0 ? 'positive' : stats.progress < 0 ? 'negative' : ''}">
+                                <i class="fas fa-arrow-${stats.progress > 0 ? 'up' : stats.progress < 0 ? 'down' : 'right'}"></i>
+                                <span>${stats.progress}%</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    statsTableBody.appendChild(row);
+                });
+            }
+            
+            function renderCharts(workouts, stats) {
+                renderActivityChart(workouts);
+                renderWorkoutTypeChart(stats.workoutTypeStats);
+                renderTopExercisesChart(stats.exerciseStats);
+            }
+            
+            function renderActivityChart(workouts) {
+                // Prepare data for activity chart
+                const labels = [];
+                const workoutData = [];
+                const progressData = [];
+                
+                // Determine date format based on current period
+                let dateFormat;
+                let groupingFunction;
+                
+                switch (currentPeriod) {
+                    case 'week':
+                        dateFormat = { weekday: 'short' };
+                        groupingFunction = date => date.toLocaleDateString('de-DE', { weekday: 'short' });
+                        break;
+                    case 'month':
+                        dateFormat = { day: 'numeric' };
+                        groupingFunction = date => date.getDate().toString();
+                        break;
+                    case 'year':
+                        dateFormat = { month: 'short' };
+                        groupingFunction = date => date.toLocaleDateString('de-DE', { month: 'short' });
+                        break;
+                    case 'all':
+                        dateFormat = { month: 'short', year: 'numeric' };
+                        groupingFunction = date => date.toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
+                        break;
+                }
+                
+                // Group workouts by date
+                const workoutsByDate = {};
+                const progressByDate = {};
+                
+                workouts.forEach(workout => {
+                    const workoutDate = new Date(workout.date);
+                    const dateKey = groupingFunction(workoutDate);
+                    
+                    if (!workoutsByDate[dateKey]) {
+                        workoutsByDate[dateKey] = 0;
+                        progressByDate[dateKey] = 0;
+                    }
+                    
+                    workoutsByDate[dateKey]++;
+                    progressByDate[dateKey] += workout.progress || 0;
+                });
+                
+                // Fill in missing dates and prepare chart data
+                const now = new Date();
+                let startDate;
+                
+                switch (currentPeriod) {
+                    case 'week':
+                        startDate = new Date(now);
+                        startDate.setDate(now.getDate() - 6);
+                        break;
+                    case 'month':
+                        startDate = new Date(now);
+                        startDate.setDate(1);
+                        break;
+                    case 'year':
+                        startDate = new Date(now);
+                        startDate.setMonth(0);
+                        startDate.setDate(1);
+                        break;
+                    case 'all':
+                        // For 'all', we'll just use the dates we have
+                        Object.keys(workoutsByDate).forEach(dateKey => {
+                            labels.push(dateKey);
+                            workoutData.push(workoutsByDate[dateKey]);
+                            progressData.push(progressByDate[dateKey] / workoutsByDate[dateKey]); // Average progress
+                        });
+                        break;
+                }
+                
+                // Fill in all dates for week, month, year
+                if (currentPeriod !== 'all') {
+                    const currentDate = new Date(startDate);
+                    
+                    while (currentDate <= now) {
+                        const dateKey = groupingFunction(currentDate);
+                        
+                        labels.push(dateKey);
+                        workoutData.push(workoutsByDate[dateKey] || 0);
+                        
+                        // Calculate average progress or 0 if no workouts
+                        const progress = workoutsByDate[dateKey] ? 
+                            progressByDate[dateKey] / workoutsByDate[dateKey] : 0;
+                        progressData.push(progress);
+                        
+                        // Increment date based on period
+                        switch (currentPeriod) {
+                            case 'week':
+                                currentDate.setDate(currentDate.getDate() + 1);
+                                break;
+                            case 'month':
+                                currentDate.setDate(currentDate.getDate() + 1);
+                                break;
+                            case 'year':
+                                currentDate.setMonth(currentDate.getMonth() + 1);
+                                break;
+                        }
+                    }
+                }
+                
+                // Create or update chart
+                const ctx = document.getElementById('activity-chart').getContext('2d');
+                
+                if (activityChart) {
+                    activityChart.destroy();
+                }
+                
+                activityChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Workouts',
+                                data: workoutData,
+                                backgroundColor: 'rgba(0, 210, 211, 0.7)',
+                                borderColor: 'rgba(0, 210, 211, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.7,
+                                order: 1,
+                                hidden: !showWorkoutsData
+                            },
+                            {
+                                label: 'Fortschritt (%)',
+                                data: progressData,
+                                backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                                borderColor: 'rgba(46, 204, 113, 1)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgba(46, 204, 113, 1)',
+                                pointRadius: 4,
+                                type: 'line',
+                                tension: 0.2,
+                                yAxisID: 'y1',
+                                order: 0,
+                                hidden: !showProgressData
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(17, 25, 54, 0.9)',
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#B0BEC5',
+                                borderColor: 'rgba(0, 210, 211, 0.3)',
+                                borderWidth: 1,
+                                padding: 10,
+                                cornerRadius: 4
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(176, 190, 197, 0.8)'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(176, 190, 197, 0.8)',
+                                    precision: 0
+                                }
+                            },
+                            y1: {
+                                beginAtZero: true,
+                                position: 'right',
+                                grid: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(46, 204, 113, 0.8)',
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function renderWorkoutTypeChart(workoutTypeStats) {
+                // Prepare data for workout type chart
+                const labels = Object.keys(workoutTypeStats);
+                const counts = labels.map(type => workoutTypeStats[type].count);
+                const progress = labels.map(type => workoutTypeStats[type].avgProgress);
+                
+                // Create color array with different hues
+                const colors = [
+                    'rgba(0, 210, 211, 0.7)',   // Primary color
+                    'rgba(46, 204, 113, 0.7)',  // Success color
+                    'rgba(52, 152, 219, 0.7)',  // Blue
+                    'rgba(155, 89, 182, 0.7)',  // Purple
+                    'rgba(241, 196, 15, 0.7)',  // Yellow
+                    'rgba(230, 126, 34, 0.7)',  // Orange
+                    'rgba(231, 76, 60, 0.7)'    // Red
+                ];
+                
+                // Create or update chart
+                const ctx = document.getElementById('workout-type-chart').getContext('2d');
+                
+                if (workoutTypeChart) {
+                    workoutTypeChart.destroy();
+                }
+                
+                workoutTypeChart = new Chart(ctx, {
+                    type: 'polarArea',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: counts,
+                            backgroundColor: colors,
+                            borderColor: colors.map(color => color.replace('0.7', '1')),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: 'rgba(176, 190, 197, 0.8)',
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(17, 25, 54, 0.9)',
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#B0BEC5',
+                                borderColor: 'rgba(0, 210, 211, 0.3)',
+                                borderWidth: 1,
+                                padding: 10,
+                                cornerRadius: 4,
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw || 0;
+                                        const progressValue = progress[context.dataIndex];
+                                        return [
+                                            `Anzahl: ${value}`,
+                                            `Fortschritt: ${progressValue}%`
+                                        ];
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                ticks: {
+                                    display: false
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)'
+                                },
+                                angleLines: {
+                                    color: 'rgba(255, 255, 255, 0.05)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function renderTopExercisesChart(exerciseStats) {
+                // Sort exercises by occurrences and take top 5
+                const sortedExercises = Object.entries(exerciseStats)
+                    .sort((a, b) => b[1].occurrences - a[1].occurrences)
+                    .slice(0, 5);
+                
+                const labels = sortedExercises.map(([name]) => name);
+                const maxWeights = sortedExercises.map(([, stats]) => stats.maxWeight);
+                const progress = sortedExercises.map(([, stats]) => stats.progress);
+                
+                // Create or update chart
+                const ctx = document.getElementById('top-exercises-chart').getContext('2d');
+                
+                if (topExercisesChart) {
+                    topExercisesChart.destroy();
+                }
+                
+                topExercisesChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Max. Gewicht (kg)',
+                                data: maxWeights,
+                                backgroundColor: 'rgba(0, 210, 211, 0.7)',
+                                borderColor: 'rgba(0, 210, 211, 1)',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.7,
+                                hidden: !showWeightData
+                            },
+                            {
+                                label: 'Fortschritt (%)',
+                                data: progress,
+                                backgroundColor: progress.map(p => 
+                                    p > 0 ? 'rgba(46, 204, 113, 0.7)' : 
+                                    p < 0 ? 'rgba(231, 76, 60, 0.7)' : 
+                                    'rgba(176, 190, 197, 0.7)'
+                                ),
+                                borderColor: progress.map(p => 
+                                    p > 0 ? 'rgba(46, 204, 113, 1)' : 
+                                    p < 0 ? 'rgba(231, 76, 60, 1)' : 
+                                    'rgba(176, 190, 197, 1)'
+                                ),
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                barPercentage: 0.6,
+                                categoryPercentage: 0.7,
+                                yAxisID: 'y1',
+                                hidden: !showProgressData
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: 'rgba(176, 190, 197, 0.8)',
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(17, 25, 54, 0.9)',
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#B0BEC5',
+                                borderColor: 'rgba(0, 210, 211, 0.3)',
+                                borderWidth: 1,
+                                padding: 10,
+                                cornerRadius: 4
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(176, 190, 197, 0.8)'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(176, 190, 197, 0.8)'
+                                }
+                            },
+                            y1: {
+                                beginAtZero: true,
+                                position: 'right',
+                                grid: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    color: 'rgba(46, 204, 113, 0.8)',
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function handleShareOption(option) {
+                switch (option) {
+                    case 'group':
+                        showToast('Teilen mit Gruppe wird vorbereitet...', 'info');
+                        // Implement group sharing
+                        break;
+                    case 'export':
+                        showToast('Export als PDF wird vorbereitet...', 'info');
+                        // Implement PDF export
+                        break;
+                    case 'image':
+                        showToast('Speichern als Bild wird vorbereitet...', 'info');
+                        // Implement image export
+                        break;
+                }
+                
+                closeAllModals();
+            }
+            
+            function openModal(modal) {
+                closeAllModals();
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    modal.classList.add('active');
+                }, 10);
+                document.body.classList.add('modal-open');
+            }
+            
+            function closeAllModals() {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    modal.classList.remove('active');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 300);
+                });
+                document.body.classList.remove('modal-open');
+            }
+            
+            function showToast(message, type = 'info') {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast toast-${type}`;
+                toast.style.display = 'block';
+                
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+            
+            function showLoader() {
+                document.getElementById('loader').style.display = 'flex';
+            }
+            
+            function hideLoader() {
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

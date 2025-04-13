@@ -4,103 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IronPulse Fitness - Registrieren</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        .register-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 30px;
-            background-color: var(--card-background);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-        
-        .register-logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .register-logo img {
-            height: 60px;
-            margin-bottom: 15px;
-        }
-        
-        .register-form {
-            margin-top: 20px;
-        }
-        
-        .register-options {
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .register-options a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-        
-        .register-options a:hover {
-            text-decoration: underline;
-        }
-        
-        .error-message {
-            color: #ff5252;
-            margin-top: 10px;
-            text-align: center;
-            display: none;
-        }
-    </style>
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
 </head>
 <body>
-    <div class="register-container">
-        <div class="register-logo">
-            <img src="logo.svg" alt="IronPulse Logo">
-            <h1>IRONPULSE</h1>
+    <div class="auth-container">
+        <div class="auth-header">
+            <img src="logo.svg" alt="IronPulse Logo" class="auth-logo">
+            <h1>Registrieren</h1>
         </div>
         
-        <div class="register-form">
+        <form id="register-form" class="auth-form">
             <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" placeholder="Dein Name">
-            </div>
-            
-            <div class="form-group">
-                <label for="username">Benutzername</label>
-                <input type="text" id="username" placeholder="Wähle einen Benutzernamen">
+                <label for="name" class="input-label">Name</label>
+                <input type="text" id="name" class="input-field" placeholder="Dein Name" required>
             </div>
             
             <div class="form-group">
-                <label for="password">Passwort</label>
-                <input type="password" id="password" placeholder="Wähle ein Passwort">
+                <label for="username" class="input-label">Benutzername</label>
+                <input type="text" id="username" class="input-field" placeholder="Wähle einen Benutzernamen" required>
+                <span id="username-hint" class="input-hint">Dein Benutzername wird öffentlich angezeigt</span>
             </div>
             
             <div class="form-group">
-                <label for="confirm-password">Passwort bestätigen</label>
-                <input type="password" id="confirm-password" placeholder="Passwort wiederholen">
+                <label for="password" class="input-label">Passwort</label>
+                <div class="password-input-container">
+                    <input type="password" id="password" class="input-field" placeholder="Wähle ein Passwort" required>
+                    <button type="button" class="password-toggle" aria-label="Passwort anzeigen/verbergen">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-meter" id="password-meter"></div>
+                    <ul class="password-requirements">
+                        <li id="req-length" class="requirement">Mindestens 8 Zeichen</li>
+                        <li id="req-uppercase" class="requirement">Mindestens ein Großbuchstabe</li>
+                        <li id="req-lowercase" class="requirement">Mindestens ein Kleinbuchstabe</li>
+                        <li id="req-number" class="requirement">Mindestens eine Zahl</li>
+                    </ul>
+                </div>
             </div>
             
-            <button id="register-btn" class="btn-primary">Registrieren</button>
-            
-            <div id="error-message" class="error-message">
-                Bitte fülle alle Felder aus
+            <div class="form-group">
+                <label for="confirm-password" class="input-label">Passwort bestätigen</label>
+                <div class="password-input-container">
+                    <input type="password" id="confirm-password" class="input-field" placeholder="Passwort wiederholen" required>
+                    <button type="button" class="password-toggle" aria-label="Passwort anzeigen/verbergen">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                </div>
+                <span id="password-match" class="input-hint"></span>
             </div>
-        </div>
+            
+            <button type="submit" class="btn-primary btn-lg btn-block">Registrieren</button>
+        </form>
         
-        <div class="register-options">
+        <div class="auth-footer">
             <p>Bereits ein Konto? <a href="login.html">Anmelden</a></p>
         </div>
     </div>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const registerBtn = document.getElementById('register-btn');
+            const form = document.getElementById('register-form');
             const nameInput = document.getElementById('name');
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
             const confirmPasswordInput = document.getElementById('confirm-password');
-            const errorMessage = document.getElementById('error-message');
+            const passwordMeter = document.getElementById('password-meter');
+            const passwordMatch = document.getElementById('password-match');
+            const reqLength = document.getElementById('req-length');
+            const reqUppercase = document.getElementById('req-uppercase');
+            const reqLowercase = document.getElementById('req-lowercase');
+            const reqNumber = document.getElementById('req-number');
+            const passwordToggles = document.querySelectorAll('.password-toggle');
             
             // Check if user is already logged in
             const currentUser = localStorage.getItem('ironpulse_current_user');
@@ -108,7 +87,80 @@
                 window.location.href = 'index.html';
             }
             
-            registerBtn.addEventListener('click', function() {
+            // Passwort-Sichtbarkeit umschalten
+            passwordToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    
+                    // Toggle icon
+                    const icon = this.querySelector('i');
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                });
+            });
+            
+            // Passwort-Stärke prüfen
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                // Anforderungen prüfen
+                const hasLength = password.length >= 8;
+                const hasUppercase = /[A-Z]/.test(password);
+                const hasLowercase = /[a-z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                
+                // Visuelles Feedback
+                reqLength.classList.toggle('met', hasLength);
+                reqUppercase.classList.toggle('met', hasUppercase);
+                reqLowercase.classList.toggle('met', hasLowercase);
+                reqNumber.classList.toggle('met', hasNumber);
+                
+                // Stärke berechnen
+                if (hasLength) strength += 25;
+                if (hasUppercase) strength += 25;
+                if (hasLowercase) strength += 25;
+                if (hasNumber) strength += 25;
+                
+                // Stärkeanzeige aktualisieren
+                passwordMeter.style.width = strength + '%';
+                
+                if (strength < 50) {
+                    passwordMeter.className = 'strength-meter weak';
+                } else if (strength < 75) {
+                    passwordMeter.className = 'strength-meter medium';
+                } else {
+                    passwordMeter.className = 'strength-meter strong';
+                }
+                
+                // Passwort-Übereinstimmung prüfen
+                if (confirmPasswordInput.value) {
+                    checkPasswordMatch();
+                }
+            });
+            
+            // Passwort-Übereinstimmung prüfen
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            
+            function checkPasswordMatch() {
+                if (passwordInput.value === confirmPasswordInput.value) {
+                    passwordMatch.textContent = 'Passwörter stimmen überein';
+                    passwordMatch.className = 'input-hint success';
+                    confirmPasswordInput.classList.remove('error');
+                } else {
+                    passwordMatch.textContent = 'Passwörter stimmen nicht überein';
+                    passwordMatch.className = 'input-error';
+                    confirmPasswordInput.classList.add('error');
+                }
+            }
+            
+            // Formular-Validierung
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Alle Validierungen prüfen
                 const name = nameInput.value.trim();
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value.trim();
@@ -116,14 +168,23 @@
                 
                 // Validate inputs
                 if (!name || !username || !password || !confirmPassword) {
-                    errorMessage.textContent = 'Bitte fülle alle Felder aus';
-                    errorMessage.style.display = 'block';
+                    showToast('Bitte fülle alle Felder aus', 'error');
                     return;
                 }
                 
-                if (password !== confirmPassword) {
-                    errorMessage.textContent = 'Passwörter stimmen nicht überein';
-                    errorMessage.style.display = 'block';
+                const hasLength = password.length >= 8;
+                const hasUppercase = /[A-Z]/.test(password);
+                const hasLowercase = /[a-z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                const passwordsMatch = password === confirmPassword;
+                
+                if (!hasLength || !hasUppercase || !hasLowercase || !hasNumber) {
+                    showToast('Bitte erfülle alle Passwortanforderungen', 'error');
+                    return;
+                }
+                
+                if (!passwordsMatch) {
+                    showToast('Passwörter stimmen nicht überein', 'error');
                     return;
                 }
                 
@@ -132,46 +193,72 @@
                 
                 // Check if username already exists
                 if (users.some(u => u.username === username)) {
-                    errorMessage.textContent = 'Benutzername bereits vergeben';
-                    errorMessage.style.display = 'block';
+                    showToast('Benutzername bereits vergeben', 'error');
                     return;
                 }
                 
-                // Create new user
-                const newUser = {
-                    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-                    name: name,
-                    username: username,
-                    password: password,
-                    workouts: []
-                };
+                // Lade-Animation anzeigen
+                showLoadingIndicator();
                 
-                // Add user to users array
-                users.push(newUser);
-                
-                // Save users to localStorage
-                localStorage.setItem('ironpulse_users', JSON.stringify(users));
-                
-                // Store current user in localStorage (without password)
-                const currentUser = {
-                    id: newUser.id,
-                    username: newUser.username,
-                    name: newUser.name
-                };
-                
-                localStorage.setItem('ironpulse_current_user', JSON.stringify(currentUser));
-                
-                // Redirect to main page
-                window.location.href = 'index.html';
+                // Simulierte API-Anfrage
+                setTimeout(() => {
+                    // Create new user
+                    const newUser = {
+                        id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                        name: name,
+                        username: username,
+                        password: password,
+                        workouts: []
+                    };
+                    
+                    // Add user to users array
+                    users.push(newUser);
+                    
+                    // Save users to localStorage
+                    localStorage.setItem('ironpulse_users', JSON.stringify(users));
+                    
+                    // Store current user in localStorage (without password)
+                    const currentUser = {
+                        id: newUser.id,
+                        username: newUser.username,
+                        name: newUser.name
+                    };
+                    
+                    localStorage.setItem('ironpulse_current_user', JSON.stringify(currentUser));
+                    
+                    hideLoadingIndicator();
+                    showToast('Registrierung erfolgreich! Du wirst weitergeleitet...', 'success');
+                    
+                    // Redirect to main page
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }, 1000);
             });
             
-            // Hide error message when user starts typing
-            const inputs = [nameInput, usernameInput, passwordInput, confirmPasswordInput];
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    errorMessage.style.display = 'none';
-                });
-            });
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 3000);
+            }
+            
+            function showLoadingIndicator() {
+                const loader = document.createElement('div');
+                loader.className = 'loader';
+                document.body.appendChild(loader);
+            }
+            
+            function hideLoadingIndicator() {
+                const loader = document.querySelector('.loader');
+                if (loader) {
+                    document.body.removeChild(loader);
+                }
+            }
         });
     </script>
 </body>

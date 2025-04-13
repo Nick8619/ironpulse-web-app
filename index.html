@@ -4,146 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IronPulse Fitness</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        .user-profile {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 8px;
-            color: var(--background-color);
-            font-weight: 600;
-        }
-        
-        .user-dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: var(--card-background);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 10px 0;
-            min-width: 150px;
-            z-index: 100;
-            display: none;
-        }
-        
-        .user-dropdown.active {
-            display: block;
-        }
-        
-        .user-dropdown-item {
-            padding: 8px 15px;
-            cursor: pointer;
-        }
-        
-        .user-dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .workout-date-detail {
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-        
-        .workout-type-detail {
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            font-size: 16px;
-            font-weight: 500;
-        }
-        
-        #repeat-workout-btn {
-            margin-top: 20px;
-        }
-        
-        .logo img {
-            height: 50px;
-            margin-right: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="transitions.css">
+    <link rel="stylesheet" href="feedback.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="accessibility.css">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
 </head>
 <body>
+    <a href="#main-content" class="skip-to-content">Zum Inhalt springen</a>
+    
     <div id="app">
-        <header>
+        <header class="app-header" role="banner">
             <div class="logo">
-                <img src="logo.svg" alt="IronPulse Logo">
-                <h1>IRONPULSE</h1>
+                <img src="logo.svg" alt="IronPulse Logo" class="logo-img">
+                <h1 class="logo-text">IRONPULSE</h1>
             </div>
             <div class="user-profile" id="user-profile">
-                <div class="user-avatar" id="user-avatar"></div>
-                <span id="user-profile-btn">User</span>
-                <div class="user-dropdown" id="user-dropdown">
-                    <div class="user-dropdown-item" id="logout-btn">Abmelden</div>
+                <div class="avatar" id="user-avatar" aria-label="Benutzerprofil öffnen"></div>
+                <span class="username" id="username">User</span>
+                <div class="user-dropdown" id="user-dropdown" role="menu" aria-hidden="true">
+                    <div class="user-dropdown-item" id="profile-btn" role="menuitem" tabindex="-1">Profil</div>
+                    <div class="user-dropdown-item" id="settings-btn" role="menuitem" tabindex="-1">Einstellungen</div>
+                    <div class="user-dropdown-item" id="logout-btn" role="menuitem" tabindex="-1">Abmelden</div>
                 </div>
             </div>
         </header>
         
-        <main>
-            <section id="home-screen" class="screen active">
+        <main class="dashboard-content" id="main-content" role="main">
+            <section id="home-screen" class="screen active" aria-labelledby="home-title">
                 <div class="container">
-                    <div class="card">
-                        <h2>Letzte Workouts</h2>
-                        <div id="last-workouts-list" class="workout-list">
+                    <h2 id="home-title" class="sr-only">Startseite</h2>
+                    
+                    <!-- Nächstes Training mit prominenter CTA -->
+                    <section class="next-workout-card" aria-labelledby="next-workout-title">
+                        <div class="card-content">
+                            <h3 class="section-title" id="next-workout-title">Nächstes Training</h3>
+                            <div class="workout-info">
+                                <h4 class="workout-name" id="next-workout-name">Push day</h4>
+                                <p class="workout-date" id="next-workout-date">Fri, Apr 26</p>
+                            </div>
+                        </div>
+                        <button class="btn-primary btn-lg start-workout-btn btn-ripple" id="start-workout-btn" aria-label="Training starten">
+                            <i class="fas fa-play" aria-hidden="true"></i>
+                            Start Workout
+                        </button>
+                    </section>
+                    
+                    <!-- Letzte Workouts mit verbesserter visueller Hierarchie -->
+                    <section class="card recent-workouts" aria-labelledby="recent-workouts-title">
+                        <h3 class="section-title" id="recent-workouts-title">Letzte Workouts</h3>
+                        
+                        <div class="workout-list" id="last-workouts-list" role="list">
                             <!-- Workouts werden hier dynamisch eingefügt -->
+                            <div class="empty-state" id="empty-workouts" aria-live="polite">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-dumbbell" aria-hidden="true"></i>
+                                </div>
+                                <h4 class="empty-state-title">Keine Workouts gefunden</h4>
+                                <p class="empty-state-description">
+                                    Starte dein erstes Workout, um deinen Fortschritt zu verfolgen.
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                        
+                        <button class="btn-tertiary view-all-btn" id="view-all-workouts-btn" aria-label="Alle Workouts anzeigen">
+                            Alle Workouts anzeigen
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </section>
                     
-                    <div class="card">
-                        <h2>Nächstes Training</h2>
-                        <div id="next-training" class="reminder">
-                            <p id="next-workout-name">Push day</p>
-                            <p id="next-workout-date">Fri, Apr 26</p>
+                    <!-- Fortschritt mit verbesserten Visualisierungen -->
+                    <section class="card progress-section" aria-labelledby="progress-title">
+                        <div class="section-header">
+                            <h3 class="section-title" id="progress-title">Fortschritt</h3>
+                            <span class="progress-percentage" id="progress-percentage" aria-live="polite">0% progress this week</span>
                         </div>
-                        <button id="start-workout-btn" class="btn-primary">Start Workout</button>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="progress-info">
-                            <h2>Fortschritt</h2>
-                            <p id="progress-percentage">+12% progress this week</p>
+                        
+                        <div class="progress-charts" id="progress-charts" aria-label="Wöchentliche Trainingsaktivität">
+                            <!-- Fortschrittsdiagramm wird hier dynamisch eingefügt -->
                         </div>
-                        <div class="progress-chart">
-                            <div class="bar-container">
-                                <div class="bar" style="height: 60%"></div>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar" style="height: 80%"></div>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar" style="height: 100%"></div>
-                            </div>
-                        </div>
-                    </div>
+                        
+                        <button class="btn-tertiary view-stats-btn" id="view-stats-btn" aria-label="Detaillierte Statistiken anzeigen">
+                            Detaillierte Statistiken
+                            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </section>
                 </div>
             </section>
             
-            <section id="new-workout-screen" class="screen">
+            <section id="new-workout-screen" class="screen" aria-labelledby="new-workout-title">
                 <div class="container">
                     <div class="screen-header">
-                        <button class="back-btn">&larr;</button>
-                        <h2>NEUES WORKOUT</h2>
+                        <button class="back-btn" data-target="home-screen" aria-label="Zurück zur Startseite">
+                            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        </button>
+                        <h2 id="new-workout-title">Neues Workout</h2>
                     </div>
                     
-                    <div class="workout-form">
+                    <form class="workout-form" id="workout-form" aria-label="Workout-Formular">
                         <div class="form-group">
-                            <label for="workout-type">Workout Typ</label>
-                            <select id="workout-type" required>
+                            <label for="workout-type" class="input-label">Workout Typ</label>
+                            <select id="workout-type" class="select-field" required aria-required="true">
                                 <option value="">Bitte wählen...</option>
                                 <option value="Pushday">Pushday</option>
                                 <option value="Pullday">Pullday</option>
@@ -153,189 +117,764 @@
                                 <option value="Lower Body">Lower Body</option>
                                 <option value="Cardio">Cardio</option>
                             </select>
+                            <div class="error-message" id="workout-type-error">Bitte wähle einen Workout-Typ aus</div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="workout-name">Workout Name (optional)</label>
-                            <input type="text" id="workout-name" placeholder="z.B. Push Day, Leg Day...">
+                            <label for="workout-name" class="input-label">Workout Name (optional)</label>
+                            <input type="text" id="workout-name" class="input-field" placeholder="z.B. Push Day, Leg Day...">
                         </div>
                         
-                        <div id="exercises-container">
+                        <div id="exercises-container" class="exercises-container" aria-live="polite">
                             <!-- Übungen werden hier dynamisch eingefügt -->
+                            <div class="empty-state" id="empty-exercises">
+                                <p class="empty-state-description">
+                                    Füge Übungen hinzu, um dein Workout zu erstellen.
+                                </p>
+                            </div>
                         </div>
                         
-                        <button id="add-exercise-btn" class="btn-secondary">+ Übung hinzufügen</button>
+                        <button type="button" id="add-exercise-btn" class="btn-secondary" aria-label="Übung hinzufügen">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                            Übung hinzufügen
+                        </button>
                         
-                        <button id="save-workout-btn" class="btn-primary">Workout speichern</button>
-                    </div>
+                        <button type="submit" id="save-workout-btn" class="btn-primary btn-lg btn-block" aria-label="Workout speichern">Workout speichern</button>
+                    </form>
                 </div>
             </section>
             
-            <section id="stats-screen" class="screen">
+            <section id="stats-screen" class="screen" aria-labelledby="stats-title">
                 <div class="container">
-                    <h2>Statistiken</h2>
+                    <div class="screen-header">
+                        <button class="back-btn" data-target="home-screen" aria-label="Zurück zur Startseite">
+                            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        </button>
+                        <h2 id="stats-title">Statistiken</h2>
+                    </div>
                     
                     <div class="card">
-                        <h3>Fortschritt nach Workout-Typ</h3>
-                        <div id="workout-type-progress" class="stats-chart">
+                        <h3 class="section-title">Fortschritt nach Workout-Typ</h3>
+                        <div id="workout-type-progress" class="stats-chart" aria-label="Fortschritt nach Workout-Typ Diagramm">
                             <!-- Statistiken werden hier dynamisch eingefügt -->
                         </div>
                     </div>
                     
                     <div class="card">
-                        <h3>Workout Häufigkeit</h3>
-                        <div id="workout-frequency" class="stats-chart">
+                        <h3 class="section-title">Workout Häufigkeit</h3>
+                        <div id="workout-frequency" class="stats-chart" aria-label="Workout Häufigkeit Diagramm">
                             <!-- Statistiken werden hier dynamisch eingefügt -->
                         </div>
                     </div>
                 </div>
             </section>
             
-            <section id="groups-screen" class="screen">
+            <section id="groups-screen" class="screen" aria-labelledby="groups-title">
                 <div class="container">
-                    <h2>Gruppen</h2>
+                    <div class="screen-header">
+                        <button class="back-btn" data-target="home-screen" aria-label="Zurück zur Startseite">
+                            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        </button>
+                        <h2 id="groups-title">Gruppen</h2>
+                    </div>
                     
-                    <div id="groups-list">
+                    <div id="groups-list" class="groups-list" role="list" aria-live="polite">
                         <!-- Gruppen werden hier dynamisch eingefügt -->
+                        <div class="empty-state" id="empty-groups">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-users" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="empty-state-title">Keine Gruppen gefunden</h3>
+                            <p class="empty-state-description">
+                                Erstelle eine Gruppe, um deine Fortschritte mit Freunden zu teilen.
+                            </p>
+                        </div>
                     </div>
                     
-                    <button id="create-group-btn" class="btn-primary">Neue Gruppe erstellen</button>
+                    <button id="create-group-btn" class="btn-primary btn-lg btn-block" aria-label="Neue Gruppe erstellen">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        Neue Gruppe erstellen
+                    </button>
                 </div>
             </section>
             
-            <section id="reminders-screen" class="screen">
+            <section id="reminders-screen" class="screen" aria-labelledby="reminders-title">
                 <div class="container">
-                    <h2>Erinnerungen</h2>
-                    
-                    <div id="reminders-list">
-                        <!-- Erinnerungen werden hier dynamisch eingefügt -->
+                    <div class="screen-header">
+                        <button class="back-btn" data-target="home-screen" aria-label="Zurück zur Startseite">
+                            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        </button>
+                        <h2 id="reminders-title">Erinnerungen</h2>
                     </div>
                     
-                    <button id="add-reminder-btn" class="btn-primary">Neue Erinnerung</button>
+                    <div id="reminders-list" class="reminders-list" role="list" aria-live="polite">
+                        <!-- Erinnerungen werden hier dynamisch eingefügt -->
+                        <div class="empty-state" id="empty-reminders">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-bell" aria-hidden="true"></i>
+                            </div>
+                            <h3 class="empty-state-title">Keine Erinnerungen gefunden</h3>
+                            <p class="empty-state-description">
+                                Erstelle Erinnerungen, um keine Trainingseinheit zu verpassen.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <button id="add-reminder-btn" class="btn-primary btn-lg btn-block" aria-label="Neue Erinnerung erstellen">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                        Neue Erinnerung
+                    </button>
                 </div>
             </section>
         </main>
         
-        <nav>
-            <button class="nav-btn active" data-screen="home-screen">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-                <span>Home</span>
-            </button>
-            <button class="nav-btn" data-screen="stats-screen">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/></svg>
-                <span>Stats</span>
-            </button>
-            <button class="nav-btn" data-screen="groups-screen">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                <span>Gruppen</span>
-            </button>
-            <button class="nav-btn" data-screen="reminders-screen">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-                <span>Erinnerungen</span>
-            </button>
+        <nav class="bottom-nav" role="navigation" aria-label="Hauptnavigation">
+            <a href="#" class="nav-tab active" data-screen="home-screen" aria-label="Home" aria-current="page">
+                <i class="fas fa-home nav-tab-icon" aria-hidden="true"></i>
+                <span class="nav-tab-text">Home</span>
+            </a>
+            <a href="#" class="nav-tab" data-screen="stats-screen" aria-label="Statistiken">
+                <i class="fas fa-chart-bar nav-tab-icon" aria-hidden="true"></i>
+                <span class="nav-tab-text">Stats</span>
+            </a>
+            <a href="#" class="nav-tab" data-screen="groups-screen" aria-label="Gruppen">
+                <i class="fas fa-users nav-tab-icon" aria-hidden="true"></i>
+                <span class="nav-tab-text">Gruppen</span>
+            </a>
+            <a href="#" class="nav-tab" data-screen="reminders-screen" aria-label="Erinnerungen">
+                <i class="fas fa-bell nav-tab-icon" aria-hidden="true"></i>
+                <span class="nav-tab-text">Erinnerungen</span>
+            </a>
         </nav>
         
         <!-- Modals -->
-        <div id="exercise-modal" class="modal">
-            <div class="modal-content">
+        <div id="exercise-modal" class="modal" role="dialog" aria-labelledby="exercise-modal-title" aria-hidden="true">
+            <div class="modal-content" role="document">
                 <div class="modal-header">
-                    <h3>Übung hinzufügen</h3>
-                    <button class="close-modal">&times;</button>
+                    <h3 id="exercise-modal-title">Übung hinzufügen</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="exercise-name">Übungsname</label>
-                        <input type="text" id="exercise-name" placeholder="z.B. Bankdrücken, Kniebeugen...">
-                    </div>
-                    
-                    <div id="sets-container">
-                        <!-- Sets werden hier dynamisch eingefügt -->
-                    </div>
-                    
-                    <button id="add-set-btn" class="btn-secondary">+ Set hinzufügen</button>
-                    
-                    <button id="save-exercise-btn" class="btn-primary">Übung speichern</button>
+                    <form id="exercise-form" aria-label="Übungs-Formular">
+                        <div class="form-group">
+                            <label for="exercise-name" class="input-label">Übungsname</label>
+                            <input type="text" id="exercise-name" class="input-field" placeholder="z.B. Bankdrücken, Kniebeugen..." required aria-required="true">
+                            <div class="error-message" id="exercise-name-error">Bitte gib einen Übungsnamen ein</div>
+                        </div>
+                        
+                        <div id="sets-container" class="sets-container" aria-live="polite">
+                            <!-- Sets werden hier dynamisch eingefügt -->
+                        </div>
+                        
+                        <button type="button" id="add-set-btn" class="btn-secondary" aria-label="Set hinzufügen">
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                            Set hinzufügen
+                        </button>
+                        
+                        <button type="submit" id="save-exercise-btn" class="btn-primary btn-block" aria-label="Übung speichern">Übung speichern</button>
+                    </form>
                 </div>
             </div>
         </div>
         
-        <div id="reminder-modal" class="modal">
-            <div class="modal-content">
+        <div id="reminder-modal" class="modal" role="dialog" aria-labelledby="reminder-modal-title" aria-hidden="true">
+            <div class="modal-content" role="document">
                 <div class="modal-header">
-                    <h3>Erinnerung hinzufügen</h3>
-                    <button class="close-modal">&times;</button>
+                    <h3 id="reminder-modal-title">Erinnerung hinzufügen</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="reminder-workout">Workout</label>
-                        <select id="reminder-workout">
-                            <!-- Workouts werden hier dynamisch eingefügt -->
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reminder-interval">Intervall</label>
-                        <select id="reminder-interval">
-                            <option value="1">Täglich</option>
-                            <option value="2">Alle 2 Tage</option>
-                            <option value="3">Alle 3 Tage</option>
-                            <option value="7">Wöchentlich</option>
-                        </select>
-                    </div>
-                    
-                    <button id="save-reminder-btn" class="btn-primary">Erinnerung speichern</button>
+                    <form id="reminder-form" aria-label="Erinnerungs-Formular">
+                        <div class="form-group">
+                            <label for="reminder-workout" class="input-label">Workout</label>
+                            <select id="reminder-workout" class="select-field" required aria-required="true">
+                                <!-- Workouts werden hier dynamisch eingefügt -->
+                            </select>
+                            <div class="error-message" id="reminder-workout-error">Bitte wähle ein Workout aus</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reminder-interval" class="input-label">Intervall</label>
+                            <select id="reminder-interval" class="select-field" required aria-required="true">
+                                <option value="1">Täglich</option>
+                                <option value="2">Alle 2 Tage</option>
+                                <option value="3">Alle 3 Tage</option>
+                                <option value="7">Wöchentlich</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" id="save-reminder-btn" class="btn-primary btn-block" aria-label="Erinnerung speichern">Erinnerung speichern</button>
+                    </form>
                 </div>
             </div>
         </div>
         
-        <div id="group-modal" class="modal">
-            <div class="modal-content">
+        <div id="group-modal" class="modal" role="dialog" aria-labelledby="group-modal-title" aria-hidden="true">
+            <div class="modal-content" role="document">
                 <div class="modal-header">
-                    <h3>Gruppe erstellen</h3>
-                    <button class="close-modal">&times;</button>
+                    <h3 id="group-modal-title">Gruppe erstellen</h3>
+                    <button class="close-modal" aria-label="Schließen">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="group-name">Gruppenname</label>
-                        <input type="text" id="group-name" placeholder="z.B. Fitness Buddies">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="group-description">Beschreibung</label>
-                        <textarea id="group-description" placeholder="Beschreibe deine Gruppe..."></textarea>
-                    </div>
-                    
-                    <button id="save-group-btn" class="btn-primary">Gruppe erstellen</button>
+                    <form id="group-form" aria-label="Gruppen-Formular">
+                        <div class="form-group">
+                            <label for="group-name" class="input-label">Gruppenname</label>
+                            <input type="text" id="group-name" class="input-field" placeholder="z.B. Fitness Buddies" required aria-required="true">
+                            <div class="error-message" id="group-name-error">Bitte gib einen Gruppennamen ein</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="group-description" class="input-label">Beschreibung</label>
+                            <textarea id="group-description" class="input-field" rows="4" placeholder="Beschreibe deine Gruppe..."></textarea>
+                        </div>
+                        
+                        <button type="submit" id="save-group-btn" class="btn-primary btn-block" aria-label="Gruppe erstellen">Gruppe erstellen</button>
+                    </form>
                 </div>
             </div>
         </div>
+        
+        <!-- Confirmation dialog -->
+        <div id="confirmation-dialog" class="confirmation-dialog" role="alertdialog" aria-labelledby="confirmation-title" aria-describedby="confirmation-message" aria-hidden="true">
+            <div class="confirmation-dialog-header">
+                <div class="confirmation-dialog-icon">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                </div>
+                <h3 id="confirmation-title" class="confirmation-dialog-title">Bestätigung</h3>
+            </div>
+            <p id="confirmation-message" class="confirmation-dialog-message">Bist du sicher, dass du diese Aktion durchführen möchtest?</p>
+            <div class="confirmation-dialog-actions">
+                <button id="cancel-action" class="btn-secondary" aria-label="Abbrechen">Abbrechen</button>
+                <button id="confirm-action" class="btn-primary" aria-label="Bestätigen">Bestätigen</button>
+            </div>
+        </div>
+        <div id="dialog-backdrop" class="dialog-backdrop" aria-hidden="true"></div>
+        
+        <!-- Toast for notifications -->
+        <div id="toast" class="toast" style="display: none;" role="status" aria-live="polite"></div>
+        
+        <!-- Loading indicator -->
+        <div id="loader" class="loader" style="display: none;" role="status" aria-label="Lädt...">
+            <span class="sr-only">Lädt...</span>
+        </div>
+        
+        <!-- Screen reader announcements -->
+        <div id="screen-reader-announcements" class="sr-only" aria-live="assertive"></div>
     </div>
     
     <script src="app.js"></script>
     <script>
-        // User profile dropdown
         document.addEventListener('DOMContentLoaded', function() {
+            // Detect keyboard navigation
+            function handleFirstTab(e) {
+                if (e.keyCode === 9) { // Tab key
+                    document.body.classList.add('keyboard-navigation');
+                    window.removeEventListener('keydown', handleFirstTab);
+                }
+            }
+            
+            window.addEventListener('keydown', handleFirstTab);
+            
+            // Mouse interaction removes keyboard focus styling
+            document.body.addEventListener('mousedown', function() {
+                document.body.classList.remove('keyboard-navigation');
+            });
+            
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('ironpulse_current_user') || '{}');
+            if (!currentUser.id) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // DOM Elements
             const userProfile = document.getElementById('user-profile');
             const userDropdown = document.getElementById('user-dropdown');
             const userAvatar = document.getElementById('user-avatar');
+            const usernameEl = document.getElementById('username');
+            const logoutBtn = document.getElementById('logout-btn');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const backBtns = document.querySelectorAll('.back-btn');
+            const startWorkoutBtn = document.getElementById('start-workout-btn');
+            const viewAllWorkoutsBtn = document.getElementById('view-all-workouts-btn');
+            const viewStatsBtn = document.getElementById('view-stats-btn');
+            const lastWorkoutsList = document.getElementById('last-workouts-list');
+            const progressCharts = document.getElementById('progress-charts');
+            const progressPercentage = document.getElementById('progress-percentage');
+            const emptyWorkouts = document.getElementById('empty-workouts');
+            const screenReaderAnnouncements = document.getElementById('screen-reader-announcements');
             
-            if (userProfile && userDropdown) {
-                userProfile.addEventListener('click', function() {
-                    userDropdown.classList.toggle('active');
+            // Set user info
+            if (currentUser.name) {
+                userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+                usernameEl.textContent = currentUser.username;
+            }
+            
+            // User profile dropdown
+            userProfile.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleDropdown();
+            });
+            
+            userProfile.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleDropdown();
+                }
+            });
+            
+            function toggleDropdown() {
+                const isExpanded = userDropdown.classList.contains('active');
+                userDropdown.classList.toggle('active');
+                userDropdown.setAttribute('aria-hidden', isExpanded);
+                
+                if (!isExpanded) {
+                    // Make dropdown items focusable
+                    const dropdownItems = userDropdown.querySelectorAll('.user-dropdown-item');
+                    dropdownItems.forEach(item => {
+                        item.setAttribute('tabindex', '0');
+                    });
+                    
+                    // Focus first item
+                    if (dropdownItems.length > 0) {
+                        dropdownItems[0].focus();
+                    }
+                } else {
+                    // Make dropdown items not focusable
+                    const dropdownItems = userDropdown.querySelectorAll('.user-dropdown-item');
+                    dropdownItems.forEach(item => {
+                        item.setAttribute('tabindex', '-1');
+                    });
+                }
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!userProfile.contains(e.target)) {
+                    userDropdown.classList.remove('active');
+                    userDropdown.setAttribute('aria-hidden', 'true');
+                    
+                    // Make dropdown items not focusable
+                    const dropdownItems = userDropdown.querySelectorAll('.user-dropdown-item');
+                    dropdownItems.forEach(item => {
+                        item.setAttribute('tabindex', '-1');
+                    });
+                }
+            });
+            
+            // Keyboard navigation for dropdown
+            const dropdownItems = userDropdown.querySelectorAll('.user-dropdown-item');
+            dropdownItems.forEach((item, index) => {
+                item.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        if (index < dropdownItems.length - 1) {
+                            dropdownItems[index + 1].focus();
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        if (index > 0) {
+                            dropdownItems[index - 1].focus();
+                        } else {
+                            userProfile.focus();
+                        }
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        userDropdown.classList.remove('active');
+                        userDropdown.setAttribute('aria-hidden', 'true');
+                        userProfile.focus();
+                    } else if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        item.click();
+                    }
+                });
+            });
+            
+            // Logout
+            logoutBtn.addEventListener('click', function() {
+                showConfirmationDialog(
+                    'Abmelden',
+                    'Möchtest du dich wirklich abmelden?',
+                    function() {
+                        localStorage.removeItem('ironpulse_current_user');
+                        window.location.href = 'login.html';
+                    }
+                );
+            });
+            
+            // Navigation
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetScreen = this.dataset.screen;
+                    
+                    // Update active tab
+                    navTabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.setAttribute('aria-current', 'false');
+                    });
+                    this.classList.add('active');
+                    this.setAttribute('aria-current', 'page');
+                    
+                    // Show target screen with transition
+                    showScreen(targetScreen);
+                    
+                    // Announce screen change to screen readers
+                    announceToScreenReader(`${this.getAttribute('aria-label')} Ansicht geöffnet`);
                 });
                 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!userProfile.contains(e.target)) {
-                        userDropdown.classList.remove('active');
+                tab.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+            
+            // Back buttons
+            backBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetScreen = this.dataset.target;
+                    showScreen(targetScreen);
+                    
+                    // Update active tab
+                    navTabs.forEach(tab => {
+                        const isActive = tab.dataset.screen === targetScreen;
+                        tab.classList.toggle('active', isActive);
+                        tab.setAttribute('aria-current', isActive ? 'page' : 'false');
+                    });
+                    
+                    // Announce screen change to screen readers
+                    announceToScreenReader('Zurück zur vorherigen Ansicht');
+                });
+            });
+            
+            // Start workout button
+            startWorkoutBtn.addEventListener('click', function() {
+                showScreen('new-workout-screen');
+                announceToScreenReader('Neues Workout erstellen');
+            });
+            
+            // View all workouts button
+            viewAllWorkoutsBtn.addEventListener('click', function() {
+                // Implement view all workouts functionality
+                showToast('Alle Workouts werden geladen...', 'info');
+            });
+            
+            // View stats button
+            viewStatsBtn.addEventListener('click', function() {
+                showScreen('stats-screen');
+                
+                // Update active tab
+                navTabs.forEach(tab => {
+                    const isActive = tab.dataset.screen === 'stats-screen';
+                    tab.classList.toggle('active', isActive);
+                    tab.setAttribute('aria-current', isActive ? 'page' : 'false');
+                });
+                
+                announceToScreenReader('Statistik Ansicht geöffnet');
+            });
+            
+            // Load data
+            loadUserData();
+            
+            // Functions
+            function loadUserData() {
+                showLoader();
+                
+                // Simulate API delay
+                setTimeout(() => {
+                    // Get users from localStorage
+                    const users = JSON.parse(localStorage.getItem('ironpulse_users') || '[]');
+                    const user = users.find(u => u.id === currentUser.id);
+                    
+                    if (!user) {
+                        hideLoader();
+                        showToast('Benutzer nicht gefunden', 'error');
+                        return;
+                    }
+                    
+                    // Render workouts
+                    renderWorkouts(user.workouts);
+                    
+                    // Render progress
+                    renderProgress(user.workouts);
+                    
+                    hideLoader();
+                }, 800);
+            }
+            
+            function renderWorkouts(workouts) {
+                if (!workouts || workouts.length === 0) {
+                    emptyWorkouts.style.display = 'flex';
+                    return;
+                }
+                
+                emptyWorkouts.style.display = 'none';
+                
+                // Sort workouts by date (newest first)
+                const sortedWorkouts = [...workouts].sort((a, b) => {
+                    return new Date(b.date) - new Date(a.date);
+                });
+                
+                // Take only the first 3
+                const recentWorkouts = sortedWorkouts.slice(0, 3);
+                
+                lastWorkoutsList.innerHTML = '';
+                
+                recentWorkouts.forEach(workout => {
+                    const workoutDate = new Date(workout.date);
+                    const formattedDate = workoutDate.toLocaleDateString('de-DE', {
+                        day: '2-digit',
+                        month: 'short'
+                    });
+                    
+                    const workoutItem = document.createElement('div');
+                    workoutItem.className = 'workout-item';
+                    workoutItem.dataset.id = workout.id;
+                    workoutItem.setAttribute('role', 'listitem');
+                    workoutItem.setAttribute('tabindex', '0');
+                    workoutItem.setAttribute('aria-label', `${workout.name || workout.type} vom ${formattedDate}, ${workout.progress > 0 ? 'mit Fortschritt' : 'ohne Fortschritt'}`);
+                    
+                    workoutItem.innerHTML = `
+                        <div class="workout-details">
+                            <h4 class="workout-name">${workout.name || workout.type}</h4>
+                            <p class="workout-date">${formattedDate}</p>
+                        </div>
+                        <div class="workout-status">
+                            ${workout.progress > 0 ? `
+                                <span class="status-badge completed">
+                                    <i class="fas fa-check" aria-hidden="true"></i>
+                                    <span>Progress</span>
+                                </span>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    // Add click event to view workout details
+                    workoutItem.addEventListener('click', function() {
+                        window.location.href = `workout-detail.html?id=${workout.id}`;
+                    });
+                    
+                    // Add keyboard event for accessibility
+                    workoutItem.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.click();
+                        }
+                    });
+                    
+                    lastWorkoutsList.appendChild(workoutItem);
+                });
+                
+                // Set next workout info
+                if (recentWorkouts.length > 0) {
+                    const nextWorkout = recentWorkouts[0];
+                    document.getElementById('next-workout-name').textContent = nextWorkout.name || nextWorkout.type;
+                    
+                    const nextDate = new Date();
+                    nextDate.setDate(nextDate.getDate() + 2); // Assume next workout is in 2 days
+                    
+                    const formattedNextDate = nextDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    
+                    document.getElementById('next-workout-date').textContent = formattedNextDate;
+                }
+            }
+            
+            function renderProgress(workouts) {
+                if (!workouts || workouts.length === 0) {
+                    progressCharts.innerHTML = `
+                        <div class="empty-state">
+                            <p class="empty-state-description">
+                                Noch keine Fortschrittsdaten verfügbar.
+                            </p>
+                        </div>
+                    `;
+                    progressPercentage.textContent = '0% progress this week';
+                    return;
+                }
+                
+                // Calculate progress percentage
+                const totalWorkouts = workouts.length;
+                const workoutsWithProgress = workouts.filter(w => w.progress > 0).length;
+                const progressPercent = Math.round((workoutsWithProgress / totalWorkouts) * 100);
+                
+                progressPercentage.textContent = `${progressPercent}% progress this week`;
+                
+                // Create weekly chart
+                progressCharts.innerHTML = '';
+                
+                const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+                const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, ...
+                
+                // Convert to our format (0 = Monday, 6 = Sunday)
+                const todayIndex = today === 0 ? 6 : today - 1;
+                
+                // Create a map of workouts by day
+                const workoutsByDay = new Array(7).fill(0);
+                
+                workouts.forEach(workout => {
+                    const workoutDate = new Date(workout.date);
+                    const workoutDay = workoutDate.getDay();
+                    const workoutDayIndex = workoutDay === 0 ? 6 : workoutDay - 1;
+                    
+                    // Only count workouts from the current week
+                    const now = new Date();
+                    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)));
+                    startOfWeek.setHours(0, 0, 0, 0);
+                    
+                    if (workoutDate >= startOfWeek) {
+                        workoutsByDay[workoutDayIndex]++;
                     }
                 });
                 
-                // Set user avatar initial
-                const currentUser = JSON.parse(localStorage.getItem('ironpulse_current_user') || '{}');
-                if (currentUser && currentUser.name) {
-                    userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+                // Find max value for scaling
+                const maxWorkouts = Math.max(...workoutsByDay, 1);
+                
+                // Create chart
+                days.forEach((day, index) => {
+                    const height = workoutsByDay[index] > 0 ? (workoutsByDay[index] / maxWorkouts) * 100 : 0;
+                    
+                    const chartItem = document.createElement('div');
+                    chartItem.className = 'progress-chart';
+                    chartItem.setAttribute('aria-label', `${day}: ${workoutsByDay[index]} Workouts`);
+                    
+                    chartItem.innerHTML = `
+                        <div class="chart-bar">
+                            <div class="chart-fill" style="height: ${height}%"></div>
+                        </div>
+                        <span class="chart-label">${day}</span>
+                    `;
+                    
+                    // Highlight today
+                    if (index === todayIndex) {
+                        chartItem.classList.add('today');
+                    }
+                    
+                    progressCharts.appendChild(chartItem);
+                });
+            }
+            
+            function showScreen(screenId) {
+                // Hide all screens
+                const screens = document.querySelectorAll('.screen');
+                screens.forEach(screen => {
+                    screen.classList.remove('active');
+                    screen.classList.remove('slide-in');
+                    screen.setAttribute('aria-hidden', 'true');
+                });
+                
+                // Show target screen with animation
+                const targetScreen = document.getElementById(screenId);
+                if (targetScreen) {
+                    targetScreen.classList.add('active');
+                    targetScreen.setAttribute('aria-hidden', 'false');
+                    setTimeout(() => {
+                        targetScreen.classList.add('slide-in');
+                    }, 10);
+                    
+                    // Focus on first focusable element in the screen
+                    setTimeout(() => {
+                        const focusableElements = targetScreen.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                        if (focusableElements.length > 0) {
+                            focusableElements[0].focus();
+                        }
+                    }, 300);
                 }
+            }
+            
+            function showToast(message, type = 'info') {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = `toast toast-${type}`;
+                toast.style.display = 'block';
+                
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+            
+            function showLoader() {
+                document.getElementById('loader').style.display = 'flex';
+            }
+            
+            function hideLoader() {
+                document.getElementById('loader').style.display = 'none';
+            }
+            
+            function showConfirmationDialog(title, message, confirmCallback) {
+                const dialog = document.getElementById('confirmation-dialog');
+                const backdrop = document.getElementById('dialog-backdrop');
+                const titleEl = document.getElementById('confirmation-title');
+                const messageEl = document.getElementById('confirmation-message');
+                const confirmBtn = document.getElementById('confirm-action');
+                const cancelBtn = document.getElementById('cancel-action');
+                
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                
+                dialog.classList.add('active');
+                backdrop.classList.add('active');
+                dialog.setAttribute('aria-hidden', 'false');
+                backdrop.setAttribute('aria-hidden', 'false');
+                
+                // Focus on cancel button by default (safer option)
+                cancelBtn.focus();
+                
+                // Set up event listeners
+                const handleConfirm = function() {
+                    closeDialog();
+                    confirmCallback();
+                };
+                
+                const handleCancel = function() {
+                    closeDialog();
+                };
+                
+                const handleKeydown = function(e) {
+                    if (e.key === 'Escape') {
+                        e.preventDefault();
+                        handleCancel();
+                    } else if (e.key === 'Tab') {
+                        // Trap focus inside dialog
+                        const focusableElements = dialog.querySelectorAll('button');
+                        const firstElement = focusableElements[0];
+                        const lastElement = focusableElements[focusableElements.length - 1];
+                        
+                        if (e.shiftKey && document.activeElement === firstElement) {
+                            e.preventDefault();
+                            lastElement.focus();
+                        } else if (!e.shiftKey && document.activeElement === lastElement) {
+                            e.preventDefault();
+                            firstElement.focus();
+                        }
+                    }
+                };
+                
+                const closeDialog = function() {
+                    dialog.classList.remove('active');
+                    backdrop.classList.remove('active');
+                    dialog.setAttribute('aria-hidden', 'true');
+                    backdrop.setAttribute('aria-hidden', 'true');
+                    
+                    // Remove event listeners
+                    confirmBtn.removeEventListener('click', handleConfirm);
+                    cancelBtn.removeEventListener('click', handleCancel);
+                    document.removeEventListener('keydown', handleKeydown);
+                };
+                
+                // Add event listeners
+                confirmBtn.addEventListener('click', handleConfirm);
+                cancelBtn.addEventListener('click', handleCancel);
+                document.addEventListener('keydown', handleKeydown);
+            }
+            
+            function announceToScreenReader(message) {
+                screenReaderAnnouncements.textContent = message;
             }
         });
     </script>

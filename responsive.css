@@ -1,0 +1,662 @@
+/* Mobile responsiveness improvements */
+@media (max-width: 768px) {
+    /* General layout adjustments */
+    .container {
+        padding: var(--space-3);
+    }
+    
+    /* Header adjustments */
+    .app-header {
+        padding: var(--space-3);
+    }
+    
+    .logo-text {
+        font-size: var(--font-size-lg);
+    }
+    
+    .logo-img {
+        width: 30px;
+        height: 30px;
+    }
+    
+    /* Card and section spacing */
+    .card, 
+    .next-workout-card,
+    .stats-summary-card,
+    .workout-item,
+    .exercise-item {
+        padding: var(--space-3);
+        margin-bottom: var(--space-3);
+    }
+    
+    .section-title {
+        font-size: var(--font-size-md);
+        margin-bottom: var(--space-3);
+    }
+    
+    /* Bottom navigation */
+    .bottom-nav {
+        padding: var(--space-1) 0;
+    }
+    
+    .nav-tab {
+        padding: var(--space-1);
+    }
+    
+    .nav-tab-icon {
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--space-1);
+    }
+    
+    .nav-tab-text {
+        font-size: var(--font-size-xxs);
+    }
+    
+    /* Form elements */
+    .form-group {
+        margin-bottom: var(--space-3);
+    }
+    
+    .input-label {
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--space-1);
+    }
+    
+    .input-field,
+    .select-field,
+    .textarea-field {
+        padding: 10px 12px;
+        font-size: var(--font-size-sm);
+    }
+    
+    /* Buttons */
+    .btn-primary,
+    .btn-secondary,
+    .btn-tertiary {
+        padding: 10px 16px;
+        font-size: var(--font-size-sm);
+    }
+    
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    /* Workout detail page */
+    .workout-title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .workout-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+    
+    .workout-actions {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+    
+    .summary-card {
+        flex-wrap: wrap;
+        gap: var(--space-3);
+    }
+    
+    .summary-item {
+        flex: 1 0 30%;
+    }
+    
+    .exercise-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+    
+    .exercise-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .set-row {
+        grid-template-columns: 1fr 1fr 1fr;
+        font-size: var(--font-size-sm);
+    }
+    
+    /* Stats page */
+    .stats-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: var(--space-2);
+    }
+    
+    .stats-tab {
+        padding: var(--space-1) var(--space-2);
+        font-size: var(--font-size-sm);
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+    
+    .stats-table-header,
+    .stats-table-row {
+        font-size: var(--font-size-sm);
+    }
+    
+    /* Modals */
+    .modal-content {
+        width: 95%;
+        max-height: 80vh;
+    }
+    
+    .modal-header {
+        padding: var(--space-3);
+    }
+    
+    .modal-body {
+        padding: var(--space-3);
+    }
+    
+    /* Toast notifications */
+    .toast {
+        width: 90%;
+        font-size: var(--font-size-xs);
+        padding: 10px 16px;
+    }
+    
+    /* Confirmation dialog */
+    .confirmation-dialog {
+        width: 95%;
+    }
+    
+    /* Touch-friendly adjustments */
+    .nav-tab,
+    .btn-primary,
+    .btn-secondary,
+    .btn-tertiary,
+    .btn-icon,
+    .workout-item,
+    .exercise-item,
+    .back-btn,
+    .close-modal,
+    .share-option {
+        min-height: 44px; /* Minimum touch target size */
+    }
+    
+    /* Improved touch targets */
+    .checkbox-label,
+    .radio-label {
+        padding: var(--space-2) 0;
+    }
+    
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Fix for iOS input styling */
+    input,
+    select,
+    textarea {
+        -webkit-appearance: none;
+        border-radius: var(--radius-md);
+    }
+    
+    /* Fix for iOS button styling */
+    button {
+        -webkit-appearance: none;
+    }
+    
+    /* Fix for iOS scrolling */
+    .modal-body {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Improved keyboard accessibility for mobile */
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 210, 211, 0.4);
+    }
+    
+    /* Adjust font sizes for better readability on small screens */
+    body {
+        font-size: var(--font-size-sm);
+    }
+    
+    h1 {
+        font-size: var(--font-size-xl);
+    }
+    
+    h2 {
+        font-size: var(--font-size-lg);
+    }
+    
+    h3 {
+        font-size: var(--font-size-md);
+    }
+    
+    /* Adjust spacing for mobile */
+    .screen {
+        padding-bottom: 80px; /* More space for bottom navigation */
+    }
+    
+    /* Improved mobile form layout */
+    .set-inputs {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    /* Collapsible sections for mobile */
+    .collapsible-section {
+        margin-bottom: var(--space-3);
+    }
+    
+    .collapsible-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-2) var(--space-3);
+        background-color: var(--card-background);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+    }
+    
+    .collapsible-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+    
+    .collapsible-section.active .collapsible-content {
+        max-height: 1000px;
+    }
+    
+    .collapsible-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .collapsible-section.active .collapsible-icon {
+        transform: rotate(180deg);
+    }
+    
+    /* Mobile-specific navigation improvements */
+    .mobile-back-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
+    }
+    
+    /* Mobile-optimized charts */
+    .chart-legend {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    /* Mobile-optimized grid layouts */
+    .grid-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Mobile-friendly share options */
+    .share-options {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    /* Mobile-optimized workout list */
+    .workout-list {
+        margin-bottom: var(--space-3);
+    }
+    
+    /* Mobile-optimized progress charts */
+    .progress-charts {
+        height: 120px;
+    }
+    
+    /* Mobile-optimized exercise form */
+    .exercise-form {
+        flex-direction: column;
+    }
+    
+    /* Mobile-optimized login/register forms */
+    .auth-container {
+        padding: var(--space-3);
+    }
+    
+    .auth-form {
+        width: 100%;
+    }
+    
+    /* Mobile-optimized onboarding */
+    .onboarding-slide {
+        padding: var(--space-3);
+    }
+    
+    .onboarding-image {
+        max-width: 80%;
+    }
+    
+    /* Mobile-optimized empty states */
+    .empty-state {
+        padding: var(--space-3);
+    }
+    
+    .empty-state-icon {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-2);
+    }
+    
+    /* Mobile-optimized filters */
+    .filter-options {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    /* Mobile-optimized date picker */
+    .date-picker {
+        width: 100%;
+    }
+    
+    /* Mobile-optimized notifications */
+    .notification-item {
+        padding: var(--space-2);
+    }
+    
+    /* Mobile-optimized profile page */
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .profile-stats {
+        justify-content: center;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 375px) {
+    /* Further reduce font sizes */
+    body {
+        font-size: var(--font-size-xs);
+    }
+    
+    /* Simplify UI for very small screens */
+    .workout-meta {
+        flex-direction: column;
+    }
+    
+    .summary-item {
+        flex: 1 0 100%;
+    }
+    
+    /* Adjust button sizes */
+    .btn-primary,
+    .btn-secondary,
+    .btn-tertiary {
+        padding: 8px 12px;
+        font-size: var(--font-size-xs);
+    }
+    
+    /* Simplify navigation */
+    .nav-tab-text {
+        display: none;
+    }
+    
+    .nav-tab-icon {
+        margin-bottom: 0;
+    }
+    
+    /* Adjust modal sizing */
+    .modal-content {
+        width: 98%;
+    }
+    
+    /* Simplify charts */
+    .chart-container {
+        height: 150px;
+    }
+    
+    /* Simplify tables */
+    .stats-table-cell {
+        padding: var(--space-1);
+    }
+}
+
+/* Tablet devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+    /* Adjust layout for tablets */
+    .container {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+    
+    /* Optimize grid layouts for tablets */
+    .grid-layout {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Adjust card layouts */
+    .card {
+        padding: var(--space-4);
+    }
+    
+    /* Optimize charts for tablets */
+    .chart-container {
+        height: 300px;
+    }
+    
+    /* Adjust form layouts */
+    .form-row {
+        display: flex;
+        gap: var(--space-3);
+    }
+    
+    .form-row .form-group {
+        flex: 1;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+    /* Adjust modal positioning */
+    .modal-content {
+        max-height: 85vh;
+    }
+    
+    /* Simplify headers */
+    .app-header {
+        padding: var(--space-2);
+    }
+    
+    /* Adjust bottom navigation */
+    .bottom-nav {
+        padding: var(--space-1) 0;
+    }
+    
+    /* Optimize vertical space */
+    .section-title {
+        margin-bottom: var(--space-2);
+    }
+    
+    .card {
+        margin-bottom: var(--space-2);
+        padding: var(--space-2);
+    }
+    
+    /* Adjust form spacing */
+    .form-group {
+        margin-bottom: var(--space-2);
+    }
+}
+
+/* High-DPI screens (Retina displays) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Optimize images for high-DPI screens */
+    .logo-img {
+        transform: scale(0.9);
+    }
+    
+    /* Adjust borders for high-DPI screens */
+    .input-field,
+    .select-field,
+    .textarea-field {
+        border-width: 0.5px;
+    }
+}
+
+/* Print styles */
+@media print {
+    /* Hide non-printable elements */
+    .bottom-nav,
+    .app-header,
+    .btn-primary,
+    .btn-secondary,
+    .btn-tertiary,
+    .btn-icon,
+    .modal,
+    .toast,
+    .loader {
+        display: none !important;
+    }
+    
+    /* Adjust colors for printing */
+    body {
+        background-color: white;
+        color: black;
+    }
+    
+    .card,
+    .workout-item,
+    .exercise-item {
+        background-color: white;
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    /* Ensure content is visible */
+    .screen {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    
+    /* Adjust page breaks */
+    .workout-item,
+    .exercise-item,
+    .stats-chart-section {
+        page-break-inside: avoid;
+    }
+    
+    /* Add URLs for links */
+    a:after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* Dark mode preference */
+@media (prefers-color-scheme: dark) {
+    /* Already using dark theme, but can add specific dark mode adjustments here */
+    .skeleton {
+        background: linear-gradient(90deg, 
+            rgba(255, 255, 255, 0.03) 25%, 
+            rgba(255, 255, 255, 0.08) 50%, 
+            rgba(255, 255, 255, 0.03) 75%);
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .screen {
+        transition: none !important;
+    }
+    
+    .chart-fill {
+        transition: none !important;
+    }
+    
+    .modal-content {
+        transition: none !important;
+    }
+}
+
+/* Hover capability detection */
+@media (hover: hover) {
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-tertiary:hover,
+    .nav-tab:hover,
+    .workout-item:hover,
+    .exercise-item:hover {
+        transform: translateY(-2px);
+    }
+}
+
+/* No hover capability (touch devices) */
+@media (hover: none) {
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-tertiary:hover,
+    .nav-tab:hover,
+    .workout-item:hover,
+    .exercise-item:hover {
+        transform: none;
+    }
+    
+    /* Increase touch targets */
+    .btn-primary,
+    .btn-secondary,
+    .btn-tertiary,
+    .btn-icon,
+    .nav-tab,
+    .back-btn,
+    .close-modal {
+        min-height: 48px;
+        min-width: 48px;
+    }
+}
+
+/* Foldable devices */
+@media (screen-spanning: single-fold-vertical) {
+    .container {
+        margin-right: env(fold-left);
+    }
+}
+
+/* Notch accommodations */
+@supports (padding-top: env(safe-area-inset-top)) {
+    .app-header {
+        padding-top: calc(var(--space-4) + env(safe-area-inset-top));
+        padding-left: calc(var(--space-4) + env(safe-area-inset-left));
+        padding-right: calc(var(--space-4) + env(safe-area-inset-right));
+    }
+    
+    .bottom-nav {
+        padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* Keyboard adjustments */
+@media screen and (max-height: 450px) {
+    .bottom-nav {
+        display: none;
+    }
+    
+    .screen {
+        padding-bottom: var(--space-3);
+    }
+}
